@@ -37,8 +37,10 @@ data class ConnectionTestResult(
 class AiEngineService(private val settingsManager: SettingsManager) {
 
     private val httpClient = OkHttpClient.Builder()
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(35, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
+        .retryOnConnectionFailure(true)
         .build()
 
     private fun getActiveApiKey(): String {
@@ -182,6 +184,18 @@ class AiEngineService(private val settingsManager: SettingsManager) {
             base.endsWith("/images/generations") -> base.removeSuffix("/images/generations") + "/models"
             base.endsWith("/v1") -> "$base/models"
             else -> "$base/v1/models"
+        }
+    }
+
+    fun normalizeChatUrl(rawEndpoint: String): String {
+        val clean = rawEndpoint.trim().removeSuffix("/")
+        val base = if (clean.startsWith("http://") || clean.startsWith("https://")) clean else "https://$clean"
+        return when {
+            base.endsWith("/chat/completions") -> base
+            base.endsWith("/models") -> base.removeSuffix("/models") + "/chat/completions"
+            base.endsWith("/images/generations") -> base.removeSuffix("/images/generations") + "/chat/completions"
+            base.endsWith("/v1") -> "$base/chat/completions"
+            else -> "$base/v1/chat/completions"
         }
     }
 
@@ -361,9 +375,20 @@ class AiEngineService(private val settingsManager: SettingsManager) {
             val responseText = callRealTextAi(fullPrompt)
             return@withContext parseRealAiResponse(responseText, attachedFileName)
         } catch (e: Exception) {
+            val model = settingsManager.textModel
+            val errorMsg = when {
+                e is java.net.SocketTimeoutException ->
+                    "Délai d'attente dépassé (timeout). Le serveur distant ($model) a mis plus de 60s à répondre. Vérifiez votre connexion réseau mobile (3G/4G) ou choisissez un autre modèle dans les Paramètres."
+                e is java.net.UnknownHostException ->
+                    "Hôte introuvable (${e.message}). Vérifiez votre connexion internet et l'URL de votre endpoint."
+                e is IOException ->
+                    e.message ?: "Erreur réseau"
+                else ->
+                    e.localizedMessage ?: "Erreur inattendue"
+            }
             return@withContext OrchestrationResult(
                 contentType = ContentType.TEXT,
-                textMessage = "Erreur de communication avec l'API IA : ${e.localizedMessage}\n\nVérifiez votre connexion internet, votre endpoint et votre clé d'API dans les Paramètres.",
+                textMessage = "Erreur de communication avec l'API IA : $errorMsg\n\nVérifiez votre connexion internet, votre endpoint et votre clé d'API dans les Paramètres.",
                 payloadJson = ""
             )
         }
@@ -417,13 +442,16 @@ class AiEngineService(private val settingsManager: SettingsManager) {
             return@withContext textBuilder.toString()
         } else {
             // OpenAI Compatible Endpoint
-            val url = "$endpoint/chat/completions"
+            val url = normalizeChatUrl(endpoint)
             val bodyJson = JSONObject().apply {
                 put("model", model)
+                put("stream", false)
+                put("temperature", 0.7)
+                put("max_tokens", 4096)
                 val messagesArr = JSONArray()
                 messagesArr.put(JSONObject().apply {
                     put("role", "system")
-                    put("content", "Tu es NEURA AI, un assistant personnel multimodal haute performance.")
+                    put("content", "Tu es NEURA AI, 'Votre intelligence augmentée'. Assistant personnel multimodal haute performance. Réponds toujours en français de façon fluide, naturelle, précise et utile.")
                 })
                 messagesArr.put(JSONObject().apply {
                     put("role", "user")
@@ -436,6 +464,8 @@ class AiEngineService(private val settingsManager: SettingsManager) {
             val request = Request.Builder()
                 .url(url)
                 .header("Authorization", "Bearer $apiKey")
+                .header("Accept", "application/json")
+                .header("User-Agent", "NeuraAI/1.0 (Android)")
                 .post(requestBody)
                 .build()
 
@@ -443,7 +473,13 @@ class AiEngineService(private val settingsManager: SettingsManager) {
             val responseString = response.body?.string() ?: ""
 
             if (!response.isSuccessful) {
-                throw IOException("Endpoint HTTP ${response.code} : $responseString")
+                val errorDetail = try {
+                    val jsonObj = JSONObject(responseString)
+                    jsonObj.optJSONObject("error")?.optString("message") ?: responseString
+                } catch (_: Exception) {
+                    responseString
+                }
+                throw IOException("Endpoint HTTP ${response.code} : $errorDetail")
             }
 
             val json = JSONObject(responseString)

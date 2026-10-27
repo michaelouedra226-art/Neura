@@ -171,6 +171,30 @@ class NeuraViewModel(private val repository: NeuraRepository) : ViewModel() {
         }
     }
 
+    suspend fun sendVoiceMessage(spokenText: String): String {
+        val prompt = spokenText.trim()
+        if (prompt.isBlank()) return ""
+
+        var convId = _currentConversationId.value
+        if (convId == null) {
+            convId = repository.createNewConversation(prompt.take(28))
+            _currentConversationId.value = convId
+        }
+
+        _isThinking.value = true
+        return try {
+            val aiMsg = repository.sendMessage(
+                conversationId = convId,
+                userText = prompt,
+                attachedFileName = null,
+                attachedFileContent = null
+            )
+            aiMsg.textContent
+        } finally {
+            _isThinking.value = false
+        }
+    }
+
     fun addMemory(key: String, value: String, category: String, importance: String = "Haute") {
         viewModelScope.launch {
             repository.addMemory(key, value, category, importance)

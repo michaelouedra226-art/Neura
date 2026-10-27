@@ -18,4 +18,20 @@ class ExampleRobolectricTest {
     val appName = context.getString(R.string.app_name)
     assertEquals("NEURA AI", appName)
   }
+
+  @Test
+  fun `test url normalizers`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val service = com.example.data.repository.AiEngineService(
+        com.example.data.local.SettingsManager(context)
+    )
+    val chatUrl = service.normalizeChatUrl("https://apihub.agnes-ai.com/v1")
+    assertEquals("https://apihub.agnes-ai.com/v1/chat/completions", chatUrl)
+
+    val imageUrl = service.normalizeAgnesImageUrl("https://apihub.agnes-ai.com/v1")
+    assertEquals("https://apihub.agnes-ai.com/v1/images/generations", imageUrl)
+
+    val modelsUrl = service.normalizeAgnesModelsUrl("https://apihub.agnes-ai.com/v1")
+    assertEquals("https://apihub.agnes-ai.com/v1/models", modelsUrl)
+  }
 }

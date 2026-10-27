@@ -77,8 +77,11 @@ import com.example.ui.theme.NeuraTextPrimary
 import com.example.ui.theme.NeuraTextSecondary
 import com.example.ui.theme.NeuraVibrantViolet
 import com.example.ui.viewmodel.NeuraViewModel
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.example.ui.components.ChatGPTVoiceModal
+import com.example.util.DocumentReader
 import java.util.Locale
 
 @Composable
@@ -94,31 +97,18 @@ fun ChatScreen(
     val userName = viewModel.settingsManager.userName
 
     val listState = rememberLazyListState()
+    var showVoiceModal by remember { mutableStateOf(false) }
 
-    // Real Speech-to-Text launcher
-    val speechLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val spokenText = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull()
-            if (!spokenText.isNullOrBlank()) {
-                viewModel.setInputText(spokenText)
-                triggerHaptic(context)
-            }
-        }
-    }
-
-    // Real File Picker launcher
+    // Real Document Reader launcher (PDF, DOCX, TXT, Images)
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         if (uri != null) {
             try {
-                val fileName = queryFileName(context, uri) ?: "document_importe.txt"
-                val fileContent = readUriContent(context, uri)
-                viewModel.attachRealFile(fileName, "DOCUMENT", fileContent)
+                val parsed = DocumentReader.readDocument(context, uri)
+                viewModel.attachRealFile(parsed.fileName, parsed.mimeType, parsed.fullContent)
                 triggerHaptic(context)
-                Toast.makeText(context, "Fichier chargé : $fileName", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, parsed.textSummary, Toast.LENGTH_LONG).show()
             } catch (e: Exception) {
                 Toast.makeText(context, "Erreur lecture : ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
@@ -197,6 +187,28 @@ fun ChatScreen(
                 IconButton(
                     onClick = {
                         triggerHaptic(context)
+                        showVoiceModal = true
+                    },
+                    modifier = Modifier.testTag("voice_header_btn")
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(34.dp)
+                            .background(Color(0xFF1E1E28), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = NeuraIcons.Mic,
+                            contentDescription = "Mode Vocal ChatGPT",
+                            tint = NeuraNeonCyan,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+
+                IconButton(
+                    onClick = {
+                        triggerHaptic(context)
                         viewModel.setTab(NeuraTab.HISTORY)
                     },
                     modifier = Modifier.testTag("history_btn")
@@ -210,7 +222,7 @@ fun ChatScreen(
                         Icon(
                             imageVector = NeuraIcons.Sparkles,
                             contentDescription = "Historique",
-                            tint = NeuraNeonCyan,
+                            tint = Color.White,
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -327,13 +339,12 @@ fun ChatScreen(
             }
         }
 
-        // Pinned Input Capsule strictly glued above the keyboard without double offset
+        // Pinned Input Capsule snugly above the bottom bar without double navigationBarsPadding
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .navigationBarsPadding()
                 .imePadding()
-                .padding(horizontal = 16.dp, vertical = 6.dp)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
         ) {
             // Attached real file badge if active
             if (attachedFile != null) {
@@ -391,7 +402,7 @@ fun ChatScreen(
                     .padding(horizontal = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Real Attachment Picker button
+                // Real Attachment Picker button (PDF, DOCX, TXT, Images)
                 IconButton(
                     onClick = {
                         triggerHaptic(context)
@@ -447,28 +458,19 @@ fun ChatScreen(
                     )
                 }
 
-                // Real Voice Recognition Button
+                // Real ChatGPT Voice Mode Button
                 IconButton(
                     onClick = {
                         triggerHaptic(context)
-                        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                            putExtra(RecognizerIntent.EXTRA_PROMPT, "Parlez à NEURA AI...")
-                        }
-                        try {
-                            speechLauncher.launch(intent)
-                        } catch (e: Exception) {
-                            Toast.makeText(context, "Saisie vocale non disponible sur cet appareil", Toast.LENGTH_SHORT).show()
-                        }
+                        showVoiceModal = true
                     },
                     modifier = Modifier.testTag("voice_btn")
                 ) {
                     Icon(
                         imageVector = NeuraIcons.Mic,
-                        contentDescription = "Dictée vocale réelle",
-                        tint = NeuraTextSecondary,
-                        modifier = Modifier.size(19.dp)
+                        contentDescription = "Mode vocal ChatGPT",
+                        tint = NeuraNeonCyan,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
 
@@ -497,25 +499,14 @@ fun ChatScreen(
                 }
             }
         }
-    }
-}
 
-private fun queryFileName(context: Context, uri: Uri): String? {
-    var name: String? = null
-    val cursor = context.contentResolver.query(uri, null, null, null, null)
-    cursor?.use {
-        if (it.moveToFirst()) {
-            val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            if (nameIndex != -1) name = it.getString(nameIndex)
+        if (showVoiceModal) {
+            ChatGPTVoiceModal(
+                viewModel = viewModel,
+                onDismiss = { showVoiceModal = false }
+            )
         }
     }
-    return name ?: uri.lastPathSegment
-}
-
-private fun readUriContent(context: Context, uri: Uri): String {
-    return context.contentResolver.openInputStream(uri)?.use { stream ->
-        BufferedReader(InputStreamReader(stream)).use { it.readText() }
-    } ?: ""
 }
 
 @Composable
