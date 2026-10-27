@@ -94,6 +94,10 @@ fun SettingsScreen(
     val isFetchingModels by viewModel.isFetchingModels.collectAsState()
     val modelsFetchError by viewModel.modelsFetchError.collectAsState()
 
+    val availableAgnesModels by viewModel.availableAgnesModels.collectAsState()
+    val isFetchingAgnesModels by viewModel.isFetchingAgnesModels.collectAsState()
+    val agnesModelsFetchError by viewModel.agnesModelsFetchError.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -449,7 +453,7 @@ fun SettingsScreen(
                     value = agnesEndpoint,
                     onValueChange = { agnesEndpoint = it },
                     label = { Text("Endpoint Agnes AI Image", color = NeuraTextMuted) },
-                    placeholder = { Text("https://api.agnes.ai/v1/images/generations", color = Color(0xFF665577)) },
+                    placeholder = { Text("https://apihub.agnes-ai.com/v1", color = Color(0xFF665577)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = NeuraVibrantViolet,
                         unfocusedBorderColor = Color(0xFF382C52),
@@ -460,12 +464,20 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth().testTag("settings_agnes_endpoint")
                 )
 
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "💡 Normalisation auto : NEURA cible automatiquement /images/generations pour la création et /models pour lister vos modèles.",
+                    fontSize = 11.sp,
+                    color = Color(0xFF8877AA),
+                    lineHeight = 15.sp
+                )
+
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
                     value = if (isAgnesKeyVisible) agnesApiKey else if (agnesApiKey.isEmpty()) "" else settings.getMaskedAgnesApiKey(),
                     onValueChange = { agnesApiKey = it },
-                    label = { Text("Clé API Dédiée Agnes AI (agn_...)", color = NeuraTextMuted) },
+                    label = { Text("Clé API Dédiée Agnes AI (sk-... ou agn_...)", color = NeuraTextMuted) },
                     placeholder = { Text("Entrez votre clé Agnes AI...", color = Color(0xFF665577)) },
                     trailingIcon = {
                         Text(
@@ -488,11 +500,134 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth().testTag("settings_agnes_apikey")
                 )
 
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // BUTTONS: Live Models Discovery + Ping for Agnes AI
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Brush.linearGradient(listOf(NeuraVibrantViolet, NeuraElectricBlue)))
+                            .clickable(enabled = !isFetchingAgnesModels) {
+                                triggerHaptic(context)
+                                viewModel.updateAgnesSettings(agnesEndpoint, agnesApiKey, agnesModel)
+                                viewModel.fetchAgnesModels()
+                            }
+                            .padding(vertical = 11.dp)
+                            .testTag("fetch_agnes_models_btn"),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (isFetchingAgnesModels) {
+                                CircularProgressIndicator(
+                                    color = Color.White,
+                                    modifier = Modifier.size(14.dp),
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                            }
+                            Text(
+                                text = if (isFetchingAgnesModels) "Recherche en direct..." else "Récupérer modèles Agnes",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White
+                            )
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFF2A1E3E))
+                            .border(1.dp, Color(0xFF4C3570), RoundedCornerShape(12.dp))
+                            .clickable(enabled = !isTestingAgnes) {
+                                triggerHaptic(context)
+                                viewModel.updateAgnesSettings(agnesEndpoint, agnesApiKey, agnesModel)
+                                viewModel.testAgnesConnection()
+                            }
+                            .padding(horizontal = 14.dp, vertical = 11.dp)
+                            .testTag("test_agnes_api_btn"),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (isTestingAgnes) {
+                                CircularProgressIndicator(
+                                    color = Color.White,
+                                    modifier = Modifier.size(12.dp),
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                            }
+                            Text(
+                                text = if (isTestingAgnes) "..." else "Test ping",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+
+                // Display Error if any
+                if (agnesModelsFetchError != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "⚠ ${agnesModelsFetchError}",
+                        fontSize = 11.5.sp,
+                        color = NeuraError,
+                        lineHeight = 15.sp
+                    )
+                }
+
+                // Display Discovered Agnes Models in Real Time
+                if (availableAgnesModels.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "Modèles disponibles sur votre compte Agnes (${availableAgnesModels.size}) :",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = NeuraNeonCyan
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        availableAgnesModels.forEach { modelName ->
+                            val isChosen = agnesModel == modelName
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(if (isChosen) NeuraVibrantViolet else Color(0xFF281C3E))
+                                    .border(1.dp, if (isChosen) NeuraNeonCyan else Color(0xFF453066), RoundedCornerShape(10.dp))
+                                    .clickable {
+                                        triggerHaptic(context)
+                                        agnesModel = modelName
+                                    }
+                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = modelName,
+                                    fontSize = 11.5.sp,
+                                    fontWeight = if (isChosen) FontWeight.Bold else FontWeight.Normal,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Presets for Agnes AI Model
                 Text(
-                    text = "Modèles d'image compatibles :",
+                    text = "Modèles d'image recommandés :",
                     fontSize = 11.sp,
                     color = NeuraTextMuted
                 )
@@ -503,18 +638,18 @@ fun SettingsScreen(
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    listOf("agnes-flux-pro-v2", "agnes-ultra-2.1", "dall-e-3", "stable-diffusion-xl").forEach { m ->
+                    listOf("dall-e-3", "flux-pro", "flux-schnell", "stable-diffusion-xl", "agnes-flux-pro-v2").forEach { m ->
                         val isChosen = agnesModel == m
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(if (isChosen) NeuraVibrantViolet else Color(0xFF281C3E))
                                 .border(1.dp, if (isChosen) NeuraNeonCyan else Color(0xFF453066), RoundedCornerShape(8.dp))
-                                .clickable {
-                                    triggerHaptic(context)
-                                    agnesModel = m
-                                }
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                            .clickable {
+                                triggerHaptic(context)
+                                agnesModel = m
+                            }
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
                         ) {
                             Text(
                                 text = m,
@@ -541,43 +676,6 @@ fun SettingsScreen(
                     shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.fillMaxWidth().testTag("settings_agnes_model")
                 )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Test Agnes AI Button
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(
-                            Brush.linearGradient(listOf(NeuraVibrantViolet, NeuraElectricBlue))
-                        )
-                        .clickable(enabled = !isTestingAgnes) {
-                            triggerHaptic(context)
-                            viewModel.updateAgnesSettings(agnesEndpoint, agnesApiKey, agnesModel)
-                            viewModel.testAgnesConnection()
-                        }
-                        .padding(vertical = 11.dp)
-                        .testTag("test_agnes_api_btn"),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (isTestingAgnes) {
-                            CircularProgressIndicator(
-                                color = Color.White,
-                                modifier = Modifier.size(14.dp),
-                                strokeWidth = 2.dp
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                        }
-                        Text(
-                            text = if (isTestingAgnes) "Vérification Agnes AI..." else "Tester la connexion Agnes AI (Image)",
-                            fontSize = 12.5.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.White
-                        )
-                    }
-                }
 
                 if (agnesConnectionResult != null) {
                     Spacer(modifier = Modifier.height(8.dp))

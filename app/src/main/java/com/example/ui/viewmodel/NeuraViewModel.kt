@@ -78,6 +78,15 @@ class NeuraViewModel(private val repository: NeuraRepository) : ViewModel() {
     private val _modelsFetchError = MutableStateFlow<String?>(null)
     val modelsFetchError: StateFlow<String?> = _modelsFetchError.asStateFlow()
 
+    private val _availableAgnesModels = MutableStateFlow<List<String>>(emptyList())
+    val availableAgnesModels: StateFlow<List<String>> = _availableAgnesModels.asStateFlow()
+
+    private val _isFetchingAgnesModels = MutableStateFlow(false)
+    val isFetchingAgnesModels: StateFlow<Boolean> = _isFetchingAgnesModels.asStateFlow()
+
+    private val _agnesModelsFetchError = MutableStateFlow<String?>(null)
+    val agnesModelsFetchError: StateFlow<String?> = _agnesModelsFetchError.asStateFlow()
+
     private val _creationsFilter = MutableStateFlow("TOUS")
     val creationsFilter: StateFlow<String> = _creationsFilter.asStateFlow()
 
@@ -217,6 +226,21 @@ class NeuraViewModel(private val repository: NeuraRepository) : ViewModel() {
                 _agnesConnectionResult.value = result
             } finally {
                 _isTestingAgnes.value = false
+            }
+        }
+    }
+
+    fun fetchAgnesModels() {
+        viewModelScope.launch {
+            _isFetchingAgnesModels.value = true
+            _agnesModelsFetchError.value = null
+            try {
+                val models = repository.fetchAgnesModels()
+                _availableAgnesModels.value = models
+            } catch (e: Exception) {
+                _agnesModelsFetchError.value = e.localizedMessage ?: "Impossible de récupérer les modèles Agnes AI."
+            } finally {
+                _isFetchingAgnesModels.value = false
             }
         }
     }

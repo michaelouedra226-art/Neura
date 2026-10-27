@@ -163,27 +163,95 @@ class AiEngineService(private val settingsManager: SettingsManager) {
         }
     }
 
+    fun normalizeAgnesImageUrl(rawEndpoint: String): String {
+        val clean = rawEndpoint.trim().removeSuffix("/")
+        val base = if (clean.startsWith("http://") || clean.startsWith("https://")) clean else "https://$clean"
+        return when {
+            base.endsWith("/images/generations") -> base
+            base.endsWith("/models") -> base.removeSuffix("/models") + "/images/generations"
+            base.endsWith("/v1") -> "$base/images/generations"
+            else -> "$base/v1/images/generations"
+        }
+    }
+
+    fun normalizeAgnesModelsUrl(rawEndpoint: String): String {
+        val clean = rawEndpoint.trim().removeSuffix("/")
+        val base = if (clean.startsWith("http://") || clean.startsWith("https://")) clean else "https://$clean"
+        return when {
+            base.endsWith("/models") -> base
+            base.endsWith("/images/generations") -> base.removeSuffix("/images/generations") + "/models"
+            base.endsWith("/v1") -> "$base/models"
+            else -> "$base/v1/models"
+        }
+    }
+
+    suspend fun fetchAgnesModels(): List<String> = withContext(Dispatchers.IO) {
+        val endpoint = settingsManager.agnesEndpoint.trim().ifBlank { settingsManager.endpoint.trim() }
+        val apiKey = settingsManager.agnesApiKey.trim().ifBlank { getActiveApiKey() }
+
+        if (apiKey.isBlank()) {
+            throw IOException("Aucune clé API renseignée pour interroger les modèles Agnes AI.")
+        }
+
+        val targetUrl = normalizeAgnesModelsUrl(endpoint)
+        val request = Request.Builder()
+            .url(targetUrl)
+            .header("Authorization", "Bearer $apiKey")
+            .header("User-Agent", "NeuraAI/1.0 (AgnesClient)")
+            .get()
+            .build()
+
+        val response = httpClient.newCall(request).execute()
+        val body = response.body?.string() ?: ""
+
+        if (!response.isSuccessful) {
+            val errorMsg = try {
+                JSONObject(body).optJSONObject("error")?.optString("message") ?: body
+            } catch (_: Exception) {
+                body
+            }
+            throw IOException("Erreur Agnes (${response.code}) : $errorMsg")
+        }
+
+        val json = JSONObject(body)
+        val dataArr = json.optJSONArray("data") ?: return@withContext emptyList()
+        val list = mutableListOf<String>()
+        for (i in 0 until dataArr.length()) {
+            val item = dataArr.getJSONObject(i)
+            val id = item.optString("id", "")
+            if (id.isNotBlank()) list.add(id)
+        }
+
+        list.sortedByDescending { modelId ->
+            val low = modelId.lowercase()
+            when {
+                low.contains("flux") -> 100
+                low.contains("dall-e") -> 95
+                low.contains("image") -> 90
+                low.contains("midjourney") -> 85
+                low.contains("sd") || low.contains("stable") -> 80
+                low.contains("agnes") -> 75
+                else -> 10
+            }
+        }
+    }
+
     suspend fun testAgnesConnection(): ConnectionTestResult = withContext(Dispatchers.IO) {
         val startTime = System.currentTimeMillis()
-        val endpoint = settingsManager.agnesEndpoint.trim()
-        val apiKey = settingsManager.agnesApiKey.trim()
+        val endpoint = settingsManager.agnesEndpoint.trim().ifBlank { settingsManager.endpoint.trim() }
+        val apiKey = settingsManager.agnesApiKey.trim().ifBlank { getActiveApiKey() }
 
         if (apiKey.isBlank()) {
             return@withContext ConnectionTestResult(
                 isSuccess = false,
                 latencyMs = 0L,
-                message = "Aucune clé Agnes AI renseignée dans la zone réservée.",
+                message = "Aucune clé renseignée dans la zone réservée Agnes AI.",
                 detectedModel = settingsManager.agnesModel
             )
         }
 
         try {
-            val targetUrl = if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
-                endpoint
-            } else {
-                "https://$endpoint"
-            }
-
+            val targetUrl = normalizeAgnesModelsUrl(endpoint)
             val request = Request.Builder()
                 .url(targetUrl)
                 .header("Authorization", "Bearer $apiKey")
@@ -192,20 +260,44 @@ class AiEngineService(private val settingsManager: SettingsManager) {
                 .build()
 
             val response = httpClient.newCall(request).execute()
-            val latency = (System.currentTimeMillis() - startTime).coerceAtLeast(110L)
+            val latency = (System.currentTimeMillis() - startTime).coerceAtLeast(80L)
+            val body = response.body?.string() ?: ""
 
-            settingsManager.agnesPingMs = latency
-            settingsManager.agnesPingStatus = "Connecté (HTTP ${response.code})"
-
-            ConnectionTestResult(
-                isSuccess = response.code in 200..299 || response.code == 405,
-                latencyMs = latency,
-                message = if (response.isSuccessful || response.code == 405) "Serveur Agnes AI accessible et clé active."
-                else "Réponse du serveur Agnes AI : HTTP ${response.code}",
-                detectedModel = settingsManager.agnesModel
-            )
+            if (response.isSuccessful) {
+                settingsManager.agnesPingMs = latency
+                val modelCount = try {
+                    JSONObject(body).optJSONArray("data")?.length() ?: 0
+                } catch (_: Exception) {
+                    0
+                }
+                settingsManager.agnesPingStatus = "Connecté ($latency ms)"
+                ConnectionTestResult(
+                    isSuccess = true,
+                    latencyMs = latency,
+                    message = "Connexion Agnes AI réussie ! ($modelCount modèles disponibles en direct)",
+                    detectedModel = settingsManager.agnesModel
+                )
+            } else {
+                val errorDetail = try {
+                    JSONObject(body).optJSONObject("error")?.optString("message") ?: body
+                } catch (_: Exception) {
+                    body
+                }
+                settingsManager.agnesPingStatus = "HTTP ${response.code}"
+                val helperMsg = when (response.code) {
+                    401 -> "Clé API non autorisée ou invalide (HTTP 401). Vérifiez la clé saisie."
+                    404 -> "Endpoint /v1/models introuvable (HTTP 404). Vérifiez l'adresse de l'hôte."
+                    else -> "Échec Agnes AI (HTTP ${response.code}) : $errorDetail"
+                }
+                ConnectionTestResult(
+                    isSuccess = false,
+                    latencyMs = latency,
+                    message = helperMsg,
+                    detectedModel = settingsManager.agnesModel
+                )
+            }
         } catch (e: Exception) {
-            val latency = (System.currentTimeMillis() - startTime).coerceAtLeast(95L)
+            val latency = (System.currentTimeMillis() - startTime).coerceAtLeast(80L)
             ConnectionTestResult(
                 isSuccess = false,
                 latencyMs = latency,
@@ -360,22 +452,45 @@ class AiEngineService(private val settingsManager: SettingsManager) {
         }
     }
 
+    private fun cleanImagePrompt(input: String): String {
+        var p = input.trim()
+        val prefixes = listOf(
+            "génération d'une image de ", "génération dune image de ", "génération image de ", "génération d'image de ",
+            "génère une image de ", "génère une image d'", "génère une image ",
+            "génère-moi une image de ", "génère moi une image de ", "génère-moi une image ",
+            "crée une image de ", "crée une image d'", "crée une image ",
+            "crée-moi une image de ", "crée moi une image de ", "crée-moi une image ",
+            "fais une image de ", "fais-moi une image de ", "dessine-moi ", "dessine ",
+            "illustre-moi ", "illustre ", "illustration de ", "image de ", "image d'"
+        )
+        for (prefix in prefixes) {
+            if (p.startsWith(prefix, ignoreCase = true)) {
+                p = p.substring(prefix.length).trim()
+                break
+            }
+        }
+        return p.ifBlank { input }
+    }
+
     private suspend fun handleRealImageGeneration(prompt: String): OrchestrationResult = withContext(Dispatchers.IO) {
-        val agnesKey = settingsManager.agnesApiKey.trim()
-        val agnesEndpoint = settingsManager.agnesEndpoint.trim()
-        val agnesModel = settingsManager.agnesModel.trim().ifBlank { "agnes-flux-pro-v2" }
+        val agnesKey = settingsManager.agnesApiKey.trim().ifBlank { getActiveApiKey() }
+        val rawEndpoint = settingsManager.agnesEndpoint.trim().ifBlank { settingsManager.endpoint.trim() }
+        val agnesModel = settingsManager.agnesModel.trim().ifBlank { "dall-e-3" }
 
         if (agnesKey.isBlank()) {
             return@withContext OrchestrationResult(
                 contentType = ContentType.TEXT,
-                textMessage = "⚠ Pour générer des images en temps réel, veuillez renseigner votre clé dans la 'Zone Réservée : Agnes AI (Images)' des Paramètres.\n\nPrompt formulé par NEURA : \"$prompt\"",
+                textMessage = "⚠ Pour générer des images en temps réel, veuillez renseigner votre clé dans la 'Zone Réservée : Agnes AI (Images)' des Paramètres.\n\nDemande reçue : \"$prompt\"",
                 payloadJson = ""
             )
         }
 
+        val targetUrl = normalizeAgnesImageUrl(rawEndpoint)
+        val cleanedPrompt = cleanImagePrompt(prompt)
+
         try {
             val jsonBody = JSONObject().apply {
-                put("prompt", prompt)
+                put("prompt", cleanedPrompt)
                 put("model", agnesModel)
                 put("size", "1024x1024")
                 put("n", 1)
@@ -383,8 +498,9 @@ class AiEngineService(private val settingsManager: SettingsManager) {
 
             val requestBody = jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType())
             val request = Request.Builder()
-                .url(agnesEndpoint)
+                .url(targetUrl)
                 .header("Authorization", "Bearer $agnesKey")
+                .header("User-Agent", "NeuraAI/1.0 (AgnesClient)")
                 .post(requestBody)
                 .build()
 
@@ -392,9 +508,14 @@ class AiEngineService(private val settingsManager: SettingsManager) {
             val responseBody = response.body?.string() ?: ""
 
             if (!response.isSuccessful) {
+                val errorDetail = try {
+                    JSONObject(responseBody).optJSONObject("error")?.optString("message") ?: responseBody
+                } catch (_: Exception) {
+                    responseBody
+                }
                 return@withContext OrchestrationResult(
                     contentType = ContentType.TEXT,
-                    textMessage = "Échec de génération Agnes AI (HTTP ${response.code}) : $responseBody\n\nVérifiez l'URL de l'endpoint et votre clé dans Paramètres > Zone Agnes AI.",
+                    textMessage = "Échec de génération Agnes AI (HTTP ${response.code}) :\n$errorDetail\n\nEndpoint appelé : $targetUrl\nModèle : $agnesModel\nConseil : Vérifiez votre clé ou sélectionnez un autre modèle compatible dans Paramètres > Zone Agnes AI.",
                     payloadJson = ""
                 )
             }
@@ -412,8 +533,16 @@ class AiEngineService(private val settingsManager: SettingsManager) {
                 }
             }
 
+            if (imageUrl.isBlank()) {
+                return@withContext OrchestrationResult(
+                    contentType = ContentType.TEXT,
+                    textMessage = "Le serveur Agnes AI a répondu mais aucune URL d'image n'a été renvoyée :\n$responseBody",
+                    payloadJson = ""
+                )
+            }
+
             val payload = JSONObject().apply {
-                put("prompt", prompt)
+                put("prompt", cleanedPrompt)
                 put("imageUrl", imageUrl)
                 put("aspect", "1:1")
                 put("style", agnesModel)
@@ -421,13 +550,13 @@ class AiEngineService(private val settingsManager: SettingsManager) {
 
             return@withContext OrchestrationResult(
                 contentType = ContentType.IMAGE,
-                textMessage = "Image générée en temps réel par le moteur Agnes AI ($agnesModel).",
+                textMessage = "Illustration générée avec succès par le moteur Agnes AI ($agnesModel) :",
                 payloadJson = payload
             )
         } catch (e: Exception) {
             return@withContext OrchestrationResult(
                 contentType = ContentType.TEXT,
-                textMessage = "Erreur de connexion avec Agnes AI : ${e.localizedMessage}. Vérifiez votre endpoint et clé dans les paramètres.",
+                textMessage = "Erreur de connexion avec Agnes AI : ${e.localizedMessage ?: "Serveur injoignable"}\nURL : $targetUrl\nVérifiez vos paramètres dans la zone Agnes AI.",
                 payloadJson = ""
             )
         }

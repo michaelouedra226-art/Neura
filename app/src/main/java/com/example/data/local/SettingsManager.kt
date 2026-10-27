@@ -59,7 +59,7 @@ class SettingsManager(context: Context) {
 
     // Dedicated Agnes AI (Image Generation Engine)
     var agnesEndpoint: String
-        get() = prefs.getString(KEY_AGNES_ENDPOINT, "https://api.agnes.ai/v1/images/generations") ?: "https://api.agnes.ai/v1/images/generations"
+        get() = prefs.getString(KEY_AGNES_ENDPOINT, "https://apihub.agnes-ai.com/v1") ?: "https://apihub.agnes-ai.com/v1"
         set(value) = prefs.edit().putString(KEY_AGNES_ENDPOINT, value).apply()
 
     var agnesApiKey: String
@@ -67,7 +67,7 @@ class SettingsManager(context: Context) {
         set(value) = prefs.edit().putString(KEY_AGNES_API_KEY, value).apply()
 
     var agnesModel: String
-        get() = prefs.getString(KEY_AGNES_MODEL, "agnes-flux-pro-v2") ?: "agnes-flux-pro-v2"
+        get() = prefs.getString(KEY_AGNES_MODEL, "dall-e-3") ?: "dall-e-3"
         set(value) = prefs.edit().putString(KEY_AGNES_MODEL, value).apply()
 
     var agnesPingMs: Long

@@ -184,6 +184,10 @@ class NeuraRepository(
         return aiEngineService.fetchAvailableModels()
     }
 
+    suspend fun fetchAgnesModels(): List<String> {
+        return aiEngineService.fetchAgnesModels()
+    }
+
     suspend fun seedInitialDataIfEmpty() {
         // Zero hardcoded seed data: user database remains strictly clean and real.
     }
