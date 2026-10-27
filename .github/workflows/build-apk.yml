@@ -1,0 +1,74 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & Package APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Prepare build environment and keystore
+        run: |
+          # Create .env from template if not present
+          if [ ! -f .env ] && [ -f .env.example ]; then
+            cp .env.example .env
+          fi
+
+          # Decode or generate debug keystore
+          if [ -f debug.keystore.base64 ]; then
+            base64 -d debug.keystore.base64 > debug.keystore
+            echo "Decoded debug.keystore from base64"
+          elif [ ! -f debug.keystore ]; then
+            keytool -genkey -v \
+              -keystore debug.keystore \
+              -alias androiddebugkey \
+              -keypass android \
+              -storepass android \
+              -dname "CN=Android Debug,O=Android,C=US" \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000
+            echo "Generated new debug.keystore"
+          fi
+
+          # Ensure gradlew executable permissions
+          chmod +x ./gradlew
+
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest --continue
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Verify APK Generation
+        run: |
+          echo "Listing generated APKs:"
+          ls -la app/build/outputs/apk/debug/
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEURA-AI-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 14

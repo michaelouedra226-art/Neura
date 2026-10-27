@@ -1,0 +1,6 @@
+{
+  "name": "NEURA AI",
+  "description": "Votre intelligence augmentée. Assistant personnel intelligent multimodal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,2634 @@
+‎
+‎
+‎CAHIER DES CHARGES COMPLET — NEURA AI
+‎
+‎Personal Intelligence Assistant
+‎
+‎
+‎---
+‎
+1. ‎VISION DU PRODUIT
+‎
+‎Nom de l'application
+‎
+‎NEURA AI
+‎
+‎Slogan
+‎
+‎"Votre intelligence augmentée."
+‎
+‎
+‎
+‎
+‎---
+‎
+‎Concept général
+‎
+‎NEURA AI est un assistant personnel intelligent multimodal capable de comprendre les demandes naturelles de l'utilisateur et d'exécuter des tâches complexes grâce à l'intelligence artificielle.
+‎
+‎L'application ne doit pas fonctionner comme une collection d'outils séparés.
+‎
+‎Il n'existe PAS de bouton :
+‎
+· ‎"Créer un quiz"
+· ‎"Faire un résumé"
+· ‎"Générer une image"
+· ‎"Créer une fiche"
+‎
+‎Toutes les capacités sont accessibles naturellement depuis la conversation.
+‎
+‎L'utilisateur parle à NEURA comme il parlerait à un assistant humain.
+‎
+‎Exemples :
+‎
+‎"Analyse ce cours et prépare-moi un programme de révision."
+‎
+‎"Crée une image professionnelle pour mon exposé."
+‎
+‎"Explique-moi ce concept comme si j'étais débutant."
+‎
+‎"Organise ma semaine."
+‎
+‎"Crée un plan pour apprendre Python."
+‎
+‎NEURA comprend l'intention et décide automatiquement des actions nécessaires.
+‎
+‎
+‎---
+‎
+1. ‎POSITIONNEMENT DESIGN
+‎
+‎NEURA doit donner l'impression d'une application créée par une entreprise IA premium en 2030.
+‎
+‎Références visuelles :
+‎
+· ‎Minimalisme Apple
+· ‎Élégance de ChatGPT
+· ‎Fluidité de Linear
+· ‎Organisation de Notion
+· ‎Technologie futuriste
+‎
+‎L'objectif est :
+‎
+‎Pas une application étudiante. Pas un chatbot classique. Un système d'intelligence personnelle.
+‎
+‎
+‎---
+‎
+1. ‎PRINCIPES DESIGN OBLIGATOIRES
+‎
+‎Règles générales
+‎
+· ‎Aucun élément inutile
+· ‎Beaucoup d'espace vide
+· ‎Interface respirante
+· ‎Animations fluides
+· ‎Coins très arrondis
+· ‎Ombres naturelles
+· ‎Icônes SVG personnalisées uniquement
+· ‎Aucun emoji dans l'interface principale
+· ‎Aucun composant Android par défaut
+‎
+‎
+‎---
+‎
+1. ‎IDENTITÉ VISUELLE
+‎
+‎Thème principal
+‎
+‎Dark Premium par défaut.
+‎
+‎Couleurs
+‎
+‎Fond principal :
+‎
+‎#09090B
+‎
+‎Surface :
+‎
+‎#18181B
+‎
+‎Carte :
+‎
+‎#27272A
+‎
+‎Texte principal :
+‎
+‎#FFFFFF
+‎
+‎Texte secondaire :
+‎
+‎#A1A1AA
+‎
+‎Accent IA :
+‎
+‎Dégradé :
+‎
+‎Bleu électrique
+‎+
+‎Violet profond
+‎
+‎
+‎---
+‎
+1. ‎LOGO NEURA
+‎
+‎Créer un logo SVG original.
+‎
+‎Concept :
+‎
+· ‎Un cerveau abstrait
+· ‎Des connexions neuronales
+· ‎Une forme circulaire
+· ‎Une sensation d'énergie intelligente
+‎
+‎Animation :
+‎
+‎Au lancement :
+‎
+‎Le logo apparaît avec :
+‎
+· ‎légère rotation
+· ‎particules lumineuses
+· ‎effet de respiration
+‎
+‎Durée : 1,5 seconde.
+‎
+‎
+‎---
+‎
+1. ‎ARCHITECTURE DE NAVIGATION
+‎
+‎NEURA utilise une navigation minimaliste.
+‎
+‎Navigation principale :
+‎
+‎Barre inférieure flottante.
+‎
+‎5 sections :
+‎
+‎Accueil
+‎Conversation
+‎Créations
+‎Mémoire
+‎Paramètres
+‎
+‎Mais la section principale reste toujours le chat.
+‎
+‎
+‎---
+‎
+1. ‎ÉCRAN D'ACCUEIL
+‎
+‎Objectif
+‎
+‎Donner immédiatement l'impression d'avoir son propre assistant.
+‎
+‎Pas de dashboard rempli.
+‎
+‎
+‎---
+‎
+‎Structure :
+‎
+‎--------------------------------
+‎
+‎        Logo NEURA
+‎
+‎
+‎Bonjour Michael
+‎
+‎
+‎Que puis-je faire pour toi ?
+‎
+‎
+‎--------------------------------
+‎
+‎
+‎       Zone conversation
+‎
+‎
+‎--------------------------------
+‎
+‎
+· ‎Message        Micro
+‎
+‎
+‎--------------------------------
+‎
+‎
+‎---
+‎
+1. ‎ZONE DE CONVERSATION
+‎
+‎Design similaire aux assistants IA modernes.
+‎
+‎Message utilisateur
+‎
+‎Carte flottante :
+‎
+· ‎Alignée à droite
+· ‎Fond dégradé bleu/violet
+· ‎Coins arrondis
+‎
+‎Réponse NEURA
+‎
+‎Pas seulement du texte.
+‎
+‎Elle peut afficher :
+‎
+· ‎texte
+· ‎images
+· ‎tableaux
+· ‎cartes
+· ‎fichiers
+· ‎quiz interactifs
+· ‎graphiques
+· ‎code
+‎
+‎
+‎---
+‎
+1. ‎SYSTÈME DE BLOCS INTELLIGENTS
+‎
+‎Chaque réponse peut devenir un objet interactif.
+‎
+‎Exemple :
+‎
+‎NEURA crée une fiche :
+‎
+‎┌─────────────────┐
+‎│ Carte de révision│
+‎│                  │
+‎│ Question         │
+‎│                  │
+‎│ Réponse          │
+‎└─────────────────┘
+‎
+‎Interactions :
+‎
+· ‎Glisser
+· ‎Sauvegarder
+· ‎Partager
+· ‎Modifier
+‎
+‎
+‎---
+‎
+1. ‎INPUT INTELLIGENT
+‎
+‎Zone message :
+‎
+‎Design :
+‎
+‎Capsule flottante.
+‎
+‎Contient :
+‎
+· ‎bouton pièce jointe
+· ‎champ texte
+· ‎microphone
+· ‎bouton envoyer
+‎
+‎Animations :
+‎
+‎Quand l'utilisateur écrit :
+‎
+· ‎légère expansion
+· ‎effet lumineux
+‎
+‎
+‎---
+‎
+1. ‎MULTIMODALITÉ
+‎
+‎NEURA doit accepter :
+‎
+‎Texte
+‎
+‎Questions normales.
+‎
+‎Documents
+‎
+‎Formats :
+‎
+· ‎PDF
+· ‎DOC
+· ‎TXT
+‎
+‎Actions :
+‎
+· ‎analyse
+· ‎résumé
+· ‎extraction
+· ‎création de contenu
+‎
+‎Images
+‎
+‎Possibilité :
+‎
+· ‎envoyer une image
+· ‎demander une analyse
+‎
+‎Voix
+‎
+‎Fonction :
+‎
+‎Parler naturellement.
+‎
+‎
+‎---
+‎
+1. ‎GÉNÉRATION D'IMAGES
+‎
+‎Grâce à l'API Agnes AI.
+‎
+‎L'utilisateur écrit :
+‎
+‎"Crée une illustration d'un volcan pour mon cours."
+‎
+‎NEURA :
+‎
+1. ‎Comprend la demande
+2. ‎Détermine qu'une image est nécessaire
+3. ‎Appelle le modèle image
+4. ‎Affiche le résultat
+‎
+‎Aucun bouton spécial.
+‎
+‎
+‎---
+‎
+1. ‎CONFIGURATION IA
+‎
+‎Écran paramètres professionnel.
+‎
+‎Connexion API
+‎
+‎Champs :
+‎
+‎Nom fournisseur
+‎
+‎Endpoint API
+‎
+‎Clé API
+‎
+‎Modèle texte
+‎
+‎Modèle image
+‎
+‎Modèle vision
+‎
+‎
+‎---
+‎
+‎Détection automatique
+‎
+‎Après saisie :
+‎
+‎NEURA teste :
+‎
+· ‎accessibilité serveur
+· ‎validité clé
+· ‎modèles disponibles
+· ‎temps réponse
+‎
+‎Animation :
+‎
+‎Cercle de chargement intelligent.
+‎
+‎Résultat :
+‎
+‎Connexion réussie
+‎
+‎Modèle :
+‎Gemini Flash
+‎
+‎Temps :
+‎380 ms
+‎
+‎
+‎---
+‎
+1. ‎MÉMOIRE IA
+‎
+‎NEURA possède une mémoire contrôlée.
+‎
+‎Elle stocke :
+‎
+· ‎préférences utilisateur
+· ‎style d'apprentissage
+· ‎projets
+· ‎informations utiles
+‎
+‎L'utilisateur peut :
+‎
+· ‎voir
+· ‎modifier
+· ‎supprimer
+‎
+‎
+‎---
+‎
+1. ‎MICRO-INTERACTIONS
+‎
+‎Obligatoires :
+‎
+‎Ouverture application
+‎
+‎Logo animé.
+‎
+‎Réponse IA
+‎
+‎Pendant réflexion :
+‎
+‎Une animation neuronale.
+‎
+‎Pas trois points classiques.
+‎
+‎Génération image
+‎
+‎Animation :
+‎
+‎Création progressive.
+‎
+‎Connexion API
+‎
+‎Scanner lumineux.
+‎
+‎Boutons
+‎
+‎Chaque clic :
+‎
+· ‎vibration légère
+· ‎animation 150ms
+‎
+‎
+‎---
+‎
+1. ‎RÈGLE ABSOLUE POUR GOOGLE AI STUDIO
+‎
+‎NE PAS créer :
+‎
+‎❌ Une simple landing page
+‎❌ Une fausse démo
+‎❌ Des boutons sans fonctionnement
+‎❌ Des réponses simulées
+‎❌ Des données fictives permanentes
+‎
+‎Créer :
+‎
+‎✅ Une vraie application fonctionnelle
+‎✅ Architecture propre
+‎✅ Composants réutilisables
+‎✅ Gestion réelle des paramètres API
+‎✅ Stockage local
+‎✅ Interface complète
+‎
+‎
+‎---
+‎
+‎
+‎---
+‎
+‎CAHIER DES CHARGES NEURA AI
+‎
+‎PARTIE 2 — ARCHITECTURE TECHNIQUE ET LOGIQUE INTERNE
+‎
+‎
+‎---
+‎
+1. ‎OBJECTIF TECHNIQUE
+‎
+‎NEURA doit être une application mobile réelle, évolutive et maintenable.
+‎
+‎L'application doit être conçue comme un produit commercial prêt à évoluer.
+‎
+‎Elle doit respecter :
+‎
+· ‎Architecture modulaire
+· ‎Séparation interface / logique / données
+· ‎Code propre
+· ‎Composants réutilisables
+· ‎Gestion des erreurs
+· ‎Persistance des données
+‎
+‎Ne jamais créer une architecture temporaire uniquement pour une démo.
+‎
+‎
+‎---
+‎
+1. ‎STACK TECHNIQUE RECOMMANDÉE
+‎
+‎Application mobile
+‎
+‎Priorité :
+‎
+‎Flutter
+‎
+‎Pourquoi :
+‎
+· ‎Interface très fluide
+· ‎Animations avancées
+· ‎Design identique Android/iOS
+· ‎Gestion facile des SVG
+· ‎Performances élevées
+‎
+‎
+‎---
+‎
+‎Langage
+‎
+‎Dart.
+‎
+‎
+‎---
+‎
+‎Architecture
+‎
+‎Utiliser :
+‎
+‎Clean Architecture.
+‎
+‎Structure obligatoire :
+‎
+‎lib/
+‎
+‎├── core/
+‎│   ├── theme/
+‎│   ├── constants/
+‎│   ├── animations/
+‎│   ├── network/
+‎│
+‎├── features/
+‎
+‎│   ├── chat/
+‎│   │
+‎│   ├── ai_settings/
+‎│   │
+‎│   ├── memory/
+‎│   │
+‎│   ├── files/
+‎│   │
+‎│   ├── image_generation/
+‎│
+‎├── data/
+‎
+‎├── domain/
+‎
+‎├── presentation/
+‎
+‎
+‎---
+‎
+1. ‎SYSTÈME DE GESTION IA
+‎
+‎NEURA doit posséder un moteur central :
+‎
+‎AI Orchestrator
+‎
+‎Son rôle :
+‎
+‎Recevoir la demande utilisateur.
+‎
+‎Analyser :
+‎
+· ‎intention
+· ‎type de contenu nécessaire
+· ‎outils nécessaires
+· ‎contexte mémoire
+‎
+‎Puis décider.
+‎
+‎
+‎---
+‎
+‎Exemple :
+‎
+‎Utilisateur :
+‎
+‎"Transforme mon cours de géologie en fiche de révision avec images."
+‎
+‎
+‎
+‎Flux :
+‎
+‎Utilisateur
+‎
+‎↓
+‎
+‎AI Orchestrator
+‎
+‎↓
+‎
+‎Analyse intention
+‎
+‎↓
+‎
+‎Actions :
+‎
+1. ‎Lire PDF
+2. ‎Résumer
+3. ‎Générer cartes
+4. ‎Générer images
+‎
+‎↓
+‎
+‎Réponse interactive
+‎
+‎
+‎---
+‎
+1. ‎SYSTÈME DE ROUTAGE DES MODÈLES
+‎
+‎NEURA doit supporter plusieurs modèles.
+‎
+‎Architecture :
+‎
+‎AI Provider Manager
+‎
+‎        |
+‎
+‎ ---------------------
+‎ |         |          |
+‎Texte    Image    Vision
+‎
+‎Gemini   Agnes    Vision API
+‎
+‎Claude
+‎
+‎GPT
+‎
+‎Autres
+‎
+‎
+‎---
+‎
+‎L'utilisateur choisit :
+‎
+‎Modèle conversation
+‎
+‎Exemple :
+‎
+· ‎Gemini
+· ‎GPT
+· ‎Claude
+· ‎modèle personnalisé
+‎
+‎Modèle image
+‎
+‎Exemple :
+‎
+· ‎Agnes AI
+‎
+‎Modèle vision
+‎
+‎Pour analyser les images.
+‎
+‎
+‎---
+‎
+1. ‎GESTION DES API PERSONNALISÉES
+‎
+‎Dans les paramètres :
+‎
+‎L'utilisateur peut entrer :
+‎
+‎Endpoint :
+‎
+‎https://api.exemple.com/v1
+‎
+‎
+‎API Key :
+‎
+‎xxxxxxxx
+‎
+‎
+‎Modèle :
+‎
+‎mon-model
+‎
+‎
+‎---
+‎
+‎NEURA doit automatiquement :
+‎
+1. ‎Tester le serveur
+‎
+1. ‎Envoyer une requête test
+‎
+1. ‎Vérifier la réponse
+‎
+1. ‎Détecter les modèles disponibles si possible
+‎
+1. ‎Sauvegarder la configuration localement
+‎
+‎
+‎---
+‎
+1. ‎SÉCURITÉ API
+‎
+‎La clé API ne doit jamais être affichée.
+‎
+‎Fonctions :
+‎
+· ‎chiffrement local
+· ‎masquage automatique
+· ‎suppression sécurisée
+‎
+‎Exemple :
+‎
+‎sk-82h************
+‎
+‎
+‎---
+‎
+1. ‎BASE DE DONNÉES LOCALE
+‎
+‎NEURA doit fonctionner même hors ligne pour les données personnelles.
+‎
+‎Utiliser :
+‎
+‎SQLite / Hive / Isar.
+‎
+‎
+‎---
+‎
+‎Tables :
+‎
+‎User
+‎
+‎id
+‎name
+‎preferences
+‎language
+‎
+‎
+‎---
+‎
+‎Conversations
+‎
+‎id
+‎title
+‎date
+‎messages
+‎attachments
+‎
+‎
+‎---
+‎
+‎Memory
+‎
+‎id
+‎information
+‎category
+‎importance
+‎
+‎
+‎---
+‎
+‎GeneratedContent
+‎
+‎Stocker :
+‎
+· ‎fiches
+· ‎quiz
+· ‎images
+· ‎documents créés
+‎
+‎
+‎---
+‎
+1. ‎SYSTÈME DE MÉMOIRE INTELLIGENTE
+‎
+‎La mémoire n'enregistre pas tout.
+‎
+‎NEURA doit analyser :
+‎
+‎Information temporaire :
+‎
+‎❌ "Je révise ce soir"
+‎
+‎Information importante :
+‎
+‎✅ "Je suis étudiant en géomatique"
+‎
+‎
+‎---
+‎
+‎Catégories :
+‎
+‎Profil
+‎
+‎Préférences
+‎
+‎Objectifs
+‎
+‎Projets
+‎
+‎Méthode d'apprentissage
+‎
+‎
+‎---
+‎
+‎L'utilisateur peut demander :
+‎
+‎"Qu'est-ce que tu sais sur moi ?"
+‎
+‎
+‎
+‎NEURA affiche :
+‎
+‎Une carte mémoire.
+‎
+‎
+‎---
+‎
+1. ‎GESTION DES DOCUMENTS
+‎
+‎Pipeline :
+‎
+‎Import PDF
+‎
+‎↓
+‎
+‎Extraction texte
+‎
+‎↓
+‎
+‎Analyse IA
+‎
+‎↓
+‎
+‎Indexation
+‎
+‎↓
+‎
+‎Conversation avec document
+‎
+‎
+‎---
+‎
+‎Fonctions :
+‎
+· ‎Résumer
+· ‎Expliquer
+· ‎Questionner
+· ‎Créer exercices
+· ‎Créer fiches
+‎
+‎
+‎---
+‎
+1. ‎SYSTÈME DE CRÉATION AUTOMATIQUE
+‎
+‎NEURA peut générer :
+‎
+‎Cartes mémoire
+‎
+‎Format :
+‎
+‎Question
+‎
+‎Réponse
+‎
+‎Niveau difficulté
+‎
+‎
+‎---
+‎
+‎Quiz
+‎
+‎Types :
+‎
+· ‎QCM
+· ‎vrai/faux
+· ‎questions ouvertes
+‎
+‎
+‎---
+‎
+‎Plans
+‎
+‎Exemple :
+‎
+‎"Prépare-moi un plan pour apprendre Python"
+‎
+‎Résultat :
+‎
+‎Semaine 1
+‎Bases
+‎
+‎Semaine 2
+‎Fonctions
+‎
+‎Semaine 3
+‎Projets
+‎
+‎
+‎---
+‎
+1. ‎GÉNÉRATION D'IMAGES AGNES AI
+‎
+‎Architecture :
+‎
+‎Demande utilisateur
+‎
+‎↓
+‎
+‎Analyse IA
+‎
+‎↓
+‎
+‎Détection besoin image
+‎
+‎↓
+‎
+‎Prompt image automatique
+‎
+‎↓
+‎
+‎Agnes API
+‎
+‎↓
+‎
+‎Résultat dans chat
+‎
+‎
+‎---
+‎
+‎NEURA doit être capable de créer lui-même un prompt image professionnel.
+‎
+‎Exemple :
+‎
+‎Utilisateur :
+‎
+‎"Fais une affiche pour mon projet"
+‎
+‎NEURA génère :
+‎
+· ‎style
+· ‎composition
+· ‎couleurs
+· ‎texte
+· ‎dimensions
+‎
+‎Puis appelle Agnes.
+‎
+‎
+‎---
+‎
+1. ‎SYSTÈME DE RÉPONSE MULTIFORMAT
+‎
+‎L'IA ne doit pas retourner uniquement du texte.
+‎
+‎Elle peut retourner :
+‎
+‎{
+‎type:"quiz",
+‎
+‎content:[...]
+‎
+‎}
+‎
+‎Types :
+‎
+‎TEXT
+‎
+‎IMAGE
+‎
+‎CARD
+‎
+‎QUIZ
+‎
+‎TABLE
+‎
+‎CODE
+‎
+‎FILE
+‎
+‎GRAPH
+‎
+‎
+‎---
+‎
+‎L'interface affiche automatiquement le bon composant.
+‎
+‎
+‎---
+‎
+1. ‎PERFORMANCE
+‎
+‎Obligatoire :
+‎
+· ‎Chargement rapide
+· ‎Cache local
+· ‎Compression images
+· ‎Gestion mémoire
+· ‎Animations 60 FPS
+‎
+‎
+‎---
+‎
+1. ‎EXPÉRIENCE UTILISATEUR
+‎
+‎Chaque action doit sembler intelligente.
+‎
+‎Exemple :
+‎
+‎L'utilisateur ajoute un PDF.
+‎
+‎Au lieu de :
+‎
+‎"Fichier ajouté"
+‎
+‎NEURA affiche :
+‎
+‎"J'ai analysé ton document. Il contient 42 pages et 6 chapitres. Que veux-tu que je fasse avec ?"
+‎
+‎
+‎
+‎
+‎---
+‎
+1. ‎ÉTAT FINAL ATTENDU
+‎
+‎NEURA doit donner l'impression :
+‎
+‎"J'ai installé mon propre assistant IA personnel."
+‎
+‎Pas :
+‎
+‎"J'ai installé une application avec des boutons IA."
+‎
+‎
+‎---
+‎
+‎Instruction finale pour Google AI Studio :
+‎
+‎Construis NEURA comme une application mobile complète de production. Ne crée jamais une simulation ou une interface de démonstration. Chaque écran, interaction et fonctionnalité décrite doit être implémentée avec une logique réelle. Priorise la qualité, la fluidité et l'expérience utilisateur premium.
+‎
+‎
+‎
+‎
+‎---
+‎
+· ‎
+‎on pote, voici la PARTIE 3 du cahier des charges NEURA AI. Cette partie décrit précisément l'interface écran par écran, le comportement visuel, les animations et les règles UX. Elle est écrite pour que Google AI Studio comprenne qu'il doit créer un produit complet, pas une maquette.
+‎
+‎
+‎---
+‎
+‎CAHIER DES CHARGES NEURA AI
+‎
+‎PARTIE 3 — DESIGN UI/UX COMPLET ÉCRAN PAR ÉCRAN
+‎
+‎
+‎---
+‎
+1. ‎DIRECTION UX GLOBALE
+‎
+‎NEURA doit être une application où l'utilisateur ressent une interaction avec une intelligence réelle.
+‎
+‎L'expérience doit être :
+‎
+· ‎fluide
+· ‎naturelle
+· ‎immersive
+· ‎premium
+· ‎futuriste mais simple
+‎
+‎L'utilisateur ne doit jamais avoir l'impression d'utiliser un logiciel compliqué.
+‎
+‎Principe :
+‎
+‎"L'utilisateur pense, NEURA comprend, NEURA agit."
+‎
+‎
+‎
+‎
+‎---
+‎
+1. ‎ÉCRAN DE DÉMARRAGE (SPLASH SCREEN)
+‎
+‎Objectif
+‎
+‎Créer une première impression forte.
+‎
+‎Durée :
+‎
+‎1 à 2 secondes maximum.
+‎
+‎
+‎---
+‎
+‎Design
+‎
+‎Fond :
+‎
+‎Noir profond.
+‎
+‎Centre :
+‎
+‎Logo NEURA en SVG.
+‎
+‎Animation :
+‎
+1. ‎Le logo apparaît progressivement.
+2. ‎Des connexions neuronales lumineuses apparaissent autour.
+3. ‎Une légère pulsation donne une impression de vie.
+‎
+‎Texte :
+‎
+‎NEURA
+‎
+‎Votre intelligence augmentée.
+‎
+‎
+‎---
+‎
+1. ‎ONBOARDING INTELLIGENT
+‎
+‎Pas un onboarding classique avec plusieurs pages inutiles.
+‎
+‎Maximum 3 écrans.
+‎
+‎
+‎---
+‎
+‎Écran 1
+‎
+‎Présentation :
+‎
+‎Bienvenue dans NEURA
+‎
+‎Votre assistant personnel capable
+‎de comprendre, créer et apprendre.
+‎
+‎Illustration :
+‎
+‎Cerveau numérique animé en SVG.
+‎
+‎
+‎---
+‎
+‎Écran 2
+‎
+‎Configuration rapide :
+‎
+‎Comment veux-tu utiliser NEURA ?
+‎
+‎Choix :
+‎
+· ‎Études
+· ‎Travail
+· ‎Création
+· ‎Programmation
+· ‎Organisation personnelle
+‎
+‎Ces choix servent uniquement à personnaliser l'expérience.
+‎
+‎
+‎---
+‎
+‎Écran 3
+‎
+‎Configuration IA :
+‎
+‎Connecte ton intelligence.
+‎
+‎Ajoute ton endpoint API
+‎et ton modèle préféré.
+‎
+‎Bouton :
+‎
+‎"Configurer plus tard"
+‎
+‎
+‎---
+‎
+1. ‎ÉCRAN PRINCIPAL — CHAT
+‎
+‎C'est le cœur de l'application.
+‎
+‎90% de l'utilisation se passe ici.
+‎
+‎
+‎---
+‎
+‎Structure
+‎
+‎Fond :
+‎
+‎Dégradé très léger noir/violet.
+‎
+‎En haut :
+‎
+‎NEURA
+‎● Connecté
+‎
+‎À droite :
+‎
+‎Icône :
+‎
+· ‎Nouvelle conversation
+· ‎Historique
+‎
+‎
+‎---
+‎
+‎Zone centrale
+‎
+‎Si aucune conversation :
+‎
+‎Afficher :
+‎
+‎Logo NEURA animé.
+‎
+‎Texte :
+‎
+‎Bonjour Michael 👋
+‎
+‎Que veux-tu créer aujourd'hui ?
+‎
+‎
+‎---
+‎
+‎Pas de boutons d'actions prédéfinies.
+‎
+‎Mais possibilité de suggestions intelligentes discrètes :
+‎
+‎"Analyse mon cours"
+‎"Crée une image"
+‎"Explique-moi un concept"
+‎
+‎Ces suggestions disparaissent dès qu'une conversation commence.
+‎
+‎
+‎---
+‎
+1. ‎BARRE DE MESSAGE
+‎
+‎Design très important.
+‎
+‎Une capsule flottante.
+‎
+‎Forme :
+‎
+‎Rectangle arrondi.
+‎
+‎Hauteur :
+‎
+‎60-70 px.
+‎
+‎
+‎---
+‎
+‎Contient :
+‎
+‎À gauche :
+‎
+‎Icône SVG :
+‎
+· ‎
+‎
+‎Options :
+‎
+· ‎Document
+· ‎Image
+· ‎Fichier
+‎
+‎Centre :
+‎
+‎Champ texte.
+‎
+‎Placeholder dynamique :
+‎
+‎Pose une question à NEURA...
+‎
+‎
+‎---
+‎
+‎À droite :
+‎
+‎Icône microphone.
+‎
+‎Bouton envoyer.
+‎
+‎
+‎---
+‎
+‎Animation :
+‎
+‎Quand l'utilisateur écrit :
+‎
+· ‎La capsule grandit légèrement.
+· ‎Une lumière douce apparaît.
+· ‎Le bouton envoyer devient actif.
+‎
+‎
+‎---
+‎
+1. ‎ANIMATION DE RÉFLEXION IA
+‎
+‎Ne jamais utiliser :
+‎
+‎"..." classique.
+‎
+‎Créer une animation NEURA.
+‎
+‎Pendant la réflexion :
+‎
+‎Afficher :
+‎
+‎Un petit noyau neuronal.
+‎
+‎Animation :
+‎
+· ‎Pulsation
+· ‎Connexions qui circulent
+· ‎Particules
+‎
+‎Texte :
+‎
+‎NEURA analyse...
+‎
+‎
+‎---
+‎
+1. ‎AFFICHAGE DES RÉPONSES
+‎
+‎Les réponses doivent être intelligentes.
+‎
+‎NEURA adapte automatiquement le format.
+‎
+‎
+‎---
+‎
+‎Texte simple
+‎
+‎Carte propre.
+‎
+‎
+‎---
+‎
+‎Liste
+‎
+‎Carte avec sections.
+‎
+‎
+‎---
+‎
+‎Code
+‎
+‎Bloc code :
+‎
+· ‎coloration syntaxique
+· ‎bouton copier
+· ‎bouton enregistrer
+‎
+‎
+‎---
+‎
+‎Image
+‎
+‎Carte image :
+‎
+· ‎aperçu
+· ‎sauvegarde
+· ‎partager
+· ‎régénérer
+‎
+‎
+‎---
+‎
+‎Document créé
+‎
+‎Carte fichier :
+‎
+‎📄 Plan de révision Python
+‎
+‎Créé par NEURA
+‎
+‎[Ouvrir]
+‎[Télécharger]
+‎
+‎
+‎---
+‎
+1. ‎CRÉATIONS (ESPACE DES CONTENUS GÉNÉRÉS)
+‎
+‎Ce n'est pas un menu principal.
+‎
+‎C'est une bibliothèque.
+‎
+‎L'utilisateur retrouve :
+‎
+· ‎images générées
+· ‎fiches
+· ‎quiz
+· ‎documents
+· ‎codes
+‎
+‎
+‎---
+‎
+‎Design :
+‎
+‎Cartes en grille.
+‎
+‎Chaque carte :
+‎
+· ‎miniature
+· ‎titre
+· ‎date
+· ‎type
+‎
+‎
+‎---
+‎
+1. ‎HISTORIQUE DES CONVERSATIONS
+‎
+‎Design similaire à une messagerie premium.
+‎
+‎Chaque conversation :
+‎
+‎Carte :
+‎
+‎Analyse cours SIG
+‎
+‎Aujourd'hui
+‎
+‎12 messages
+‎
+‎
+‎---
+‎
+‎Fonctions :
+‎
+· ‎recherche
+· ‎suppression
+· ‎renommage automatique par IA
+‎
+‎
+‎---
+‎
+1. ‎ESPACE MÉMOIRE
+‎
+‎Interface futuriste.
+‎
+‎Titre :
+‎
+‎Mémoire NEURA
+‎
+‎
+‎---
+‎
+‎Visualisation :
+‎
+‎Des cartes flottantes :
+‎
+‎Michael
+‎
+‎Étudiant
+‎
+‎Préférence :
+‎Explications simples
+‎
+‎Projet :
+‎Application IA
+‎
+‎
+‎---
+‎
+‎Actions :
+‎
+· ‎modifier
+· ‎supprimer
+· ‎ajouter une information
+‎
+‎
+‎---
+‎
+1. ‎PARAMÈTRES IA
+‎
+‎Écran professionnel.
+‎
+‎
+‎---
+‎
+‎Carte connexion
+‎
+‎Moteur IA
+‎
+‎Connecté
+‎
+‎Gemini Flash
+‎
+‎
+‎---
+‎
+‎Configuration
+‎
+‎Champs :
+‎
+‎Endpoint API
+‎
+‎API Key
+‎
+‎Modèle texte
+‎
+‎Modèle image
+‎
+‎Modèle vision
+‎
+‎
+‎---
+‎
+‎Test connexion
+‎
+‎Animation :
+‎
+‎Scanner lumineux.
+‎
+‎Résultat :
+‎
+‎✓ Serveur accessible
+‎
+‎✓ Modèle disponible
+‎
+‎✓ Temps réponse 320 ms
+‎
+‎
+‎---
+‎
+1. ‎MICRO-INTERACTIONS OBLIGATOIRES
+‎
+‎Boutons
+‎
+‎Chaque clic :
+‎
+· ‎légère compression
+· ‎vibration haptique
+‎
+‎
+‎---
+‎
+‎Cartes
+‎
+‎Ouverture :
+‎
+· ‎effet zoom doux
+· ‎flou arrière-plan
+‎
+‎
+‎---
+‎
+‎Navigation
+‎
+‎Transition :
+‎
+· ‎fondu
+· ‎déplacement fluide
+‎
+‎
+‎---
+‎
+‎Génération
+‎
+‎Pendant création :
+‎
+‎Barre de progression intelligente.
+‎
+‎Exemple :
+‎
+‎Analyse...
+‎Création...
+‎Finalisation...
+‎
+‎
+‎---
+‎
+1. ‎SYSTÈME SVG
+‎
+‎Toutes les icônes doivent être :
+‎
+· ‎SVG personnalisés
+· ‎cohérents
+· ‎minimalistes
+· ‎animables
+‎
+‎Interdit :
+‎
+‎❌ Emojis comme icônes
+‎❌ Icônes système Android par défaut
+‎❌ Images téléchargées
+‎
+‎
+‎---
+‎
+‎Style :
+‎
+· ‎lignes fines
+· ‎arrondies
+· ‎modernes
+‎
+‎
+‎---
+‎
+1. ‎RÈGLES ANTI-DÉMO POUR GOOGLE AI STUDIO
+‎
+‎Ajouter obligatoirement cette instruction :
+‎
+‎Ne crée pas une application fictive présentant seulement des écrans statiques.
+‎
+‎Toutes les interactions doivent fonctionner.
+‎
+‎Les boutons doivent avoir une logique.
+‎
+‎Les paramètres API doivent être réellement utilisables.
+‎
+‎Les données doivent être persistantes.
+‎
+‎L'application doit être pensée comme une version 1 d'un produit commercial.
+‎
+‎
+‎---
+‎
+1. ‎RÉSULTAT FINAL ATTENDU
+‎
+‎À la fin, NEURA doit ressembler à :
+‎
+· ‎un assistant IA personnel premium
+· ‎une application capable d'évoluer
+· ‎un produit startup
+· ‎une expérience proche des meilleurs assistants IA actuels
+‎
+‎Pas une application scolaire.
+‎
+‎
+‎---
+‎
+· ‎
+· ‎
+· ‎CAHIER DES CHARGES NEURA AI
+· ‎
+· ‎PARTIE 4 — INTELLIGENCE ARTIFICIELLE, PERSONNALITÉ ET MOTEUR DE RAISONNEMENT
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎IDENTITÉ DE NEURA
+· ‎
+· ‎NEURA n'est pas un chatbot classique.
+· ‎
+· ‎NEURA est un assistant personnel intelligent multimodal.
+· ‎
+· ‎Son rôle :
+· ‎
+· ‎Comprendre l'objectif réel de l'utilisateur et fournir la meilleure solution possible, en choisissant automatiquement les outils nécessaires.
+· ‎
+· ‎
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎PERSONNALITÉ DE NEURA
+· ‎
+· ‎Style de communication
+· ‎
+· ‎NEURA doit être :
+· ‎
+· ‎intelligent
+· ‎professionnel
+· ‎chaleureux
+· ‎patient
+· ‎pédagogique
+· ‎précis
+· ‎
+· ‎Il ne doit jamais être :
+· ‎
+· ‎froid
+· ‎robotique
+· ‎trop bavard inutilement
+· ‎condescendant
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Adaptation utilisateur
+· ‎
+· ‎NEURA adapte ses réponses selon l'utilisateur.
+· ‎
+· ‎Exemple :
+· ‎
+· ‎Utilisateur débutant :
+· ‎
+· ‎"Explique simplement avec un exemple."
+· ‎
+· ‎
+· ‎
+· ‎NEURA :
+· ‎
+· ‎Explication simple + analogie.
+· ‎
+· ‎Utilisateur avancé :
+· ‎
+· ‎"Donne-moi une explication technique."
+· ‎
+· ‎
+· ‎
+· ‎NEURA :
+· ‎
+· ‎Explication détaillée.
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎PROMPT SYSTÈME PRINCIPAL DE NEURA
+· ‎
+· ‎Le moteur IA doit utiliser un prompt système similaire :
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Tu es NEURA, un assistant personnel intelligent.
+· ‎
+· ‎Ta mission est d'aider l'utilisateur à apprendre,
+· ‎créer, organiser, analyser et résoudre des problèmes.
+· ‎
+· ‎Tu ne fonctionnes pas comme une liste d'outils.
+· ‎Tu comprends naturellement les intentions.
+· ‎
+· ‎Analyse toujours :
+· ‎
+· ‎Le besoin réel de l'utilisateur.
+· ‎Le résultat attendu.
+· ‎Les outils nécessaires.
+· ‎
+· ‎Tu peux :
+· ‎
+· ‎analyser des documents
+· ‎créer des fiches
+· ‎générer des quiz
+· ‎produire des images
+· ‎créer des plans
+· ‎expliquer des concepts
+· ‎aider à programmer
+· ‎organiser des informations
+· ‎
+· ‎Tu dois toujours fournir une réponse utile et exploitable.
+· ‎
+· ‎Si une action nécessite une capacité spécifique,
+· ‎sélectionne automatiquement le bon outil.
+· ‎
+· ‎Ne demande pas à l'utilisateur de choisir un outil
+· ‎si tu peux comprendre son intention.
+· ‎
+· ‎Ton objectif est d'être un véritable assistant personnel.
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎SYSTÈME DE COMPREHENSION DES INTENTIONS
+· ‎
+· ‎Avant chaque réponse, NEURA effectue une analyse interne.
+· ‎
+· ‎Exemple :
+· ‎
+· ‎Demande :
+· ‎
+· ‎"J'ai un examen dans deux semaines, aide-moi."
+· ‎
+· ‎
+· ‎
+· ‎Analyse :
+· ‎
+· ‎{
+· ‎intent:
+· ‎"planification_apprentissage",
+· ‎
+· ‎actions:
+· ‎[
+· ‎"analyser objectif",
+· ‎"créer planning",
+· ‎"proposer méthode"
+· ‎]
+· ‎}
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎ROUTEUR D'ACTIONS INTELLIGENT
+· ‎
+· ‎NEURA possède un "AI Router".
+· ‎
+· ‎Son rôle :
+· ‎
+· ‎Décider quoi faire.
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Exemple 1
+· ‎
+· ‎Utilisateur :
+· ‎
+· ‎"Résume ce PDF"
+· ‎
+· ‎
+· ‎
+· ‎Détection :
+· ‎
+· ‎Type : Document
+· ‎
+· ‎Action :
+· ‎
+· ‎Extraction texte
+· ‎Résumé
+· ‎Création réponse
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Exemple 2
+· ‎
+· ‎Utilisateur :
+· ‎
+· ‎"Fais-moi une illustration d'un réseau informatique"
+· ‎
+· ‎
+· ‎
+· ‎Détection :
+· ‎
+· ‎Type : Image
+· ‎
+· ‎Action :
+· ‎
+· ‎Appel Agnes AI.
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Exemple 3
+· ‎
+· ‎Utilisateur :
+· ‎
+· ‎"Crée une application météo"
+· ‎
+· ‎
+· ‎
+· ‎Détection :
+· ‎
+· ‎Type : Programmation
+· ‎
+· ‎Action :
+· ‎
+· ‎Architecture
+· ‎Code
+· ‎Explications
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎SYSTÈME D'OUTILS INTERNES
+· ‎
+· ‎NEURA doit fonctionner avec des capacités.
+· ‎
+· ‎Chaque capacité est un module.
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Module Document
+· ‎
+· ‎Fonctions :
+· ‎
+· ‎Lire PDF
+· ‎Extraire texte
+· ‎Comprendre contenu
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Module Learning
+· ‎
+· ‎Fonctions :
+· ‎
+· ‎créer fiches
+· ‎créer cartes mémoire
+· ‎générer exercices
+· ‎créer plans d'étude
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Module Image
+· ‎
+· ‎Fonctions :
+· ‎
+· ‎créer prompt image
+· ‎appeler Agnes AI
+· ‎gérer résultats
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Module Code
+· ‎
+· ‎Fonctions :
+· ‎
+· ‎générer code
+· ‎expliquer
+· ‎corriger erreurs
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Module Organisation
+· ‎
+· ‎Fonctions :
+· ‎
+· ‎tâches
+· ‎calendrier
+· ‎objectifs
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎UTILISATION D'AGNES AI
+· ‎
+· ‎NEURA doit cacher la complexité technique.
+· ‎
+· ‎L'utilisateur ne doit jamais voir :
+· ‎
+· ‎"Appel API image".
+· ‎
+· ‎Il voit simplement :
+· ‎
+· ‎"Je crée ton image."
+· ‎
+· ‎
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Processus :
+· ‎
+· ‎Utilisateur :
+· ‎
+· ‎"Crée une affiche moderne pour mon projet."
+· ‎
+· ‎NEURA :
+· ‎
+· ‎Étape 1 :
+· ‎
+· ‎Comprend le contexte.
+· ‎
+· ‎Étape 2 :
+· ‎
+· ‎Génère un prompt professionnel :
+· ‎
+· ‎Affiche premium moderne,
+· ‎design startup,
+· ‎typographie élégante,
+· ‎composition équilibrée...
+· ‎
+· ‎Étape 3 :
+· ‎
+· ‎Envoie à Agnes AI.
+· ‎
+· ‎Étape 4 :
+· ‎
+· ‎Affiche le résultat.
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎MODE APPRENTISSAGE INTELLIGENT
+· ‎
+· ‎Quand l'utilisateur donne un cours :
+· ‎
+· ‎NEURA doit comprendre :
+· ‎
+· ‎matière
+· ‎niveau
+· ‎concepts importants
+· ‎difficultés
+· ‎
+· ‎Puis proposer naturellement :
+· ‎
+· ‎Exemple :
+· ‎
+· ‎"J'ai analysé ton chapitre. Je peux te préparer une fiche de révision, des cartes mémoire ou un quiz si tu veux."
+· ‎
+· ‎
+· ‎
+· ‎Mais sans afficher des boutons obligatoires.
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎CRÉATION DE CONTENU STRUCTURÉ
+· ‎
+· ‎Quand NEURA génère un élément complexe, il doit utiliser des formats structurés.
+· ‎
+· ‎Exemple :
+· ‎
+· ‎Quiz :
+· ‎
+· ‎{
+· ‎type:"quiz",
+· ‎title:"Python débutant",
+· ‎questions:[
+· ‎{
+· ‎question:"",
+· ‎answers:[]
+· ‎}
+· ‎]
+· ‎}
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Carte mémoire :
+· ‎
+· ‎{
+· ‎type:"flashcard",
+· ‎front:"",
+· ‎back:""
+· ‎}
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎Image :
+· ‎
+· ‎{
+· ‎type:"image",
+· ‎prompt:"",
+· ‎result:""
+· ‎}
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎CONTEXTE DES CONVERSATIONS
+· ‎
+· ‎NEURA doit comprendre le contexte.
+· ‎
+· ‎Exemple :
+· ‎
+· ‎Utilisateur :
+· ‎
+· ‎"Analyse ce document."
+· ‎
+· ‎Puis :
+· ‎
+· ‎"Maintenant crée-moi un quiz."
+· ‎
+· ‎NEURA comprend que "le document" correspond au fichier précédent.
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎GESTION DES ERREURS
+· ‎
+· ‎NEURA doit être intelligent face aux problèmes.
+· ‎
+· ‎Exemple :
+· ‎
+· ‎API indisponible.
+· ‎
+· ‎Au lieu :
+· ‎
+· ‎"Erreur 500"
+· ‎
+· ‎Afficher :
+· ‎
+· ‎"Je n'arrive pas à contacter le modèle actuellement. Vérifie ta connexion ou change de modèle dans les paramètres."
+· ‎
+· ‎
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎MODE HORS LIGNE
+· ‎
+· ‎Même sans IA :
+· ‎
+· ‎Disponible :
+· ‎
+· ‎historique
+· ‎mémoire locale
+· ‎documents enregistrés
+· ‎créations sauvegardées
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎SÉCURITÉ ET CONFIDENTIALITÉ
+· ‎
+· ‎NEURA doit respecter :
+· ‎
+· ‎données privées locales
+· ‎aucune collecte inutile
+· ‎suppression facile
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎VISION FINALE
+· ‎
+· ‎NEURA doit donner cette impression :
+· ‎
+· ‎L'utilisateur n'utilise pas une application.
+· ‎
+· ‎Il possède une intelligence personnelle.
+· ‎
+· ‎Une IA qui :
+· ‎
+· ‎apprend avec lui
+· ‎crée avec lui
+· ‎organise sa vie
+· ‎l'aide à progresser
+· ‎
+· ‎
+· ‎---
+· ‎
+· ‎INSTRUCTION FINALE À AJOUTER DANS GOOGLE AI STUDIO :
+· ‎
+· ‎Ne réduis jamais NEURA à un chatbot simple.
+· ‎
+· ‎Construis un véritable assistant IA multimodal.
+· ‎
+· ‎Toutes les capacités doivent être déclenchées naturellement par la conversation.
+· ‎
+· ‎L'utilisateur ne doit pas chercher des fonctionnalités :
+· ‎NEURA doit comprendre ses intentions.
+· ‎
+· ‎Priorité absolue :
+· ‎expérience utilisateur premium,
+· ‎architecture évolutive,
+· ‎fonctionnalités réelles,
+· ‎design professionnel.
+‎
+‎
+‎on pote, voici la PARTIE 5 du cahier des charges NEURA AI. Cette partie transforme la vision en un vrai système de design et de développement, pour que Google AI Studio ne crée pas seulement des écrans mais une application cohérente.
+‎
+‎
+‎---
+‎
+‎CAHIER DES CHARGES NEURA AI
+‎
+‎PARTIE 5 — DESIGN SYSTEM, COMPOSANTS, ANIMATIONS ET PLAN DE DÉVELOPPEMENT
+‎
+‎
+‎---
+‎
+1. ‎DESIGN SYSTEM GLOBAL
+‎
+‎Objectif
+‎
+‎Créer une identité visuelle cohérente dans toute l'application.
+‎
+‎Chaque écran doit sembler appartenir au même produit.
+‎
+‎
+‎---
+‎
+1. ‎TYPOGRAPHIE
+‎
+‎Style :
+‎
+‎Moderne, lisible, premium.
+‎
+‎Hiérarchie :
+‎
+‎Grand titre
+‎
+‎Utilisation :
+‎
+‎Accueil, pages principales.
+‎
+‎Style :
+‎
+· ‎Taille importante
+· ‎Gras
+· ‎Espacement légèrement augmenté
+‎
+‎Exemple :
+‎
+‎Bonjour Michael
+‎
+‎
+‎---
+‎
+‎Titres secondaires
+‎
+‎Pour :
+‎
+· ‎cartes
+· ‎sections
+· ‎documents
+‎
+‎
+‎---
+‎
+‎Texte normal
+‎
+‎Pour :
+‎
+· ‎réponses IA
+· ‎descriptions
+· ‎paramètres
+‎
+‎
+‎---
+‎
+‎Texte technique
+‎
+‎Pour :
+‎
+· ‎code
+· ‎API
+· ‎logs
+‎
+‎Police monospace.
+‎
+‎
+‎---
+‎
+1. ‎SYSTÈME DE CARTES
+‎
+‎NEURA utilise beaucoup de cartes intelligentes.
+‎
+‎Toutes les cartes :
+‎
+· ‎coins arrondis 24 px
+· ‎fond légèrement transparent
+· ‎ombre douce
+· ‎animation à l'apparition
+‎
+‎
+‎---
+‎
+‎Exemple :
+‎
+‎Carte document :
+‎
+‎┌────────────────────┐
+‎│ 📄 Cours Python     │
+‎│                    │
+‎│ 45 pages analysées │
+‎│                    │
+‎│ Voir l'analyse →   │
+‎└────────────────────┘
+‎
+‎
+‎---
+‎
+1. ‎BOUTONS
+‎
+‎Aucun bouton Android classique.
+‎
+‎Créer des boutons personnalisés.
+‎
+‎
+‎---
+‎
+‎Bouton principal
+‎
+‎Exemple :
+‎
+‎"Envoyer"
+‎
+‎Style :
+‎
+· ‎Capsule
+· ‎Dégradé bleu/violet
+· ‎Icône SVG
+· ‎Animation au toucher
+‎
+‎
+‎---
+‎
+‎Bouton secondaire
+‎
+‎Style :
+‎
+· ‎Transparent
+· ‎Bordure légère
+· ‎Effet verre
+‎
+‎
+‎---
+‎
+1. ‎ICÔNES SVG
+‎
+‎Toutes les icônes doivent être créées spécialement pour NEURA.
+‎
+‎Style :
+‎
+· ‎Ligne fine
+· ‎Arrondie
+· ‎Minimaliste
+· ‎Futuriste
+‎
+‎
+‎---
+‎
+‎Icônes nécessaires :
+‎
+· ‎Chat
+· ‎Mémoire
+· ‎Fichier
+· ‎Image
+· ‎Micro
+· ‎Paramètres
+· ‎Recherche
+· ‎Modèle IA
+· ‎Connexion
+· ‎Historique
+· ‎Création
+‎
+‎
+‎---
+‎
+‎Animation possible :
+‎
+‎Exemple icône IA :
+‎
+· ‎Les lignes internes bougent légèrement
+· ‎Effet respiration
+‎
+‎
+‎---
+‎
+1. ‎DESIGN DU CHAT
+‎
+‎Le chat est le centre de NEURA.
+‎
+‎
+‎---
+‎
+‎Bulles utilisateur
+‎
+‎Style :
+‎
+· ‎Droite
+· ‎Dégradé bleu/violet
+· ‎Texte blanc
+‎
+‎Animation :
+‎
+‎Arrivée :
+‎
+· ‎déplacement depuis la droite
+· ‎légère réduction
+‎
+‎
+‎---
+‎
+‎Réponses NEURA
+‎
+‎Style :
+‎
+· ‎Gauche
+· ‎Fond sombre transparent
+· ‎Texte clair
+‎
+‎Animation :
+‎
+· ‎apparition progressive
+· ‎effet écriture naturelle
+‎
+‎
+‎---
+‎
+1. ‎COMPOSANTS INTELLIGENTS
+‎
+‎NEURA ne doit pas afficher seulement du texte.
+‎
+‎Créer des composants dynamiques.
+‎
+‎
+‎---
+‎
+‎AITextBlock
+‎
+‎Pour :
+‎
+· ‎explications
+· ‎réponses normales
+‎
+‎
+‎---
+‎
+‎AIImageCard
+‎
+‎Pour :
+‎
+· ‎images générées
+‎
+‎Contient :
+‎
+· ‎aperçu
+· ‎enregistrer
+· ‎partager
+· ‎refaire
+‎
+‎
+‎---
+‎
+‎AIQuizCard
+‎
+‎Pour :
+‎
+· ‎quiz interactifs
+‎
+‎Fonctions :
+‎
+· ‎répondre
+· ‎correction instantanée
+· ‎score
+‎
+‎
+‎---
+‎
+‎AIFlashcard
+‎
+‎Pour :
+‎
+· ‎cartes mémoire
+‎
+‎Animation :
+‎
+‎Retourner la carte.
+‎
+‎
+‎---
+‎
+‎AIFileCard
+‎
+‎Pour :
+‎
+· ‎PDF
+· ‎documents générés
+‎
+‎
+‎---
+‎
+‎AICodeBlock
+‎
+‎Pour :
+‎
+· ‎programmation
+‎
+‎Fonctions :
+‎
+· ‎copier
+· ‎télécharger
+· ‎expliquer
+‎
+‎
+‎---
+‎
+1. ‎MICRO-INTERACTIONS AVANCÉES
+‎
+‎Ouverture d'une conversation
+‎
+‎Animation :
+‎
+‎Les éléments apparaissent en cascade.
+‎
+‎
+‎---
+‎
+‎Envoi d'un message
+‎
+‎Avant envoi :
+‎
+‎Le bouton pulse légèrement.
+‎
+‎Après envoi :
+‎
+‎La bulle apparaît avec une animation fluide.
+‎
+‎
+‎---
+‎
+‎Réponse IA
+‎
+‎Pendant génération :
+‎
+‎Afficher un noyau neuronal animé.
+‎
+‎États :
+‎
+‎Analyse
+‎Réflexion
+‎Création
+‎Finalisation
+‎
+‎
+‎---
+‎
+‎Génération image
+‎
+‎Afficher :
+‎
+‎Création de votre image...
+‎
+‎Analyse du concept
+‎Composition
+‎Génération
+‎Optimisation
+‎
+‎
+‎---
+‎
+1. ‎RESPONSIVE MOBILE
+‎
+‎NEURA doit être optimisé pour téléphone.
+‎
+‎Priorité :
+‎
+‎Android.
+‎
+‎
+‎---
+‎
+‎Support :
+‎
+· ‎petits écrans
+· ‎grands écrans
+· ‎mode portrait principalement
+‎
+‎
+‎---
+‎
+‎Règles :
+‎
+· ‎boutons accessibles au pouce
+· ‎zones tactiles grandes
+· ‎clavier bien géré
+· ‎pas de texte coupé
+‎
+‎
+‎---
+‎
+1. ‎ACCESSIBILITÉ
+‎
+‎Obligatoire :
+‎
+· ‎contraste élevé
+· ‎taille de texte adaptable
+· ‎support lecteur d'écran
+· ‎animations désactivables
+‎
+‎
+‎---
+‎
+1. ‎PERFORMANCE
+‎
+‎Objectifs :
+‎
+‎Ouverture :
+‎
+‎moins de 2 secondes.
+‎
+‎Animations :
+‎
+‎60 FPS.
+‎
+‎
+‎---
+‎
+‎Optimisations :
+‎
+· ‎chargement progressif
+· ‎cache local
+· ‎compression images
+· ‎gestion mémoire
+‎
+‎
+‎---
+‎
+‎
+‎73. TESTS OBLIGATOIRES AVANT LIVRAISON
+‎Google AI Studio doit vérifier :
+‎Interface
+‎☑ Tous les écrans existent
+‎☑ Les animations fonctionnent
+‎☑ Le design est cohérent
+‎IA
+‎☑ API configurable
+‎☑ Modèle modifiable
+‎☑ Gestion erreurs
+‎☑ Historique fonctionnel
+‎Données
+‎☑ Sauvegarde locale
+‎☑ Suppression possible
+‎☑ Confidentialité
+‎
