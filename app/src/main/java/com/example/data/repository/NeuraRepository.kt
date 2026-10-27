@@ -31,7 +31,7 @@ class NeuraRepository(
         return messageDao.getMessagesForConversation(conversationId)
     }
 
-    suspend fun createNewConversation(initialTitle: String = "Nouvelle conversation"): String {
+    suspend fun createNewConversation(initialTitle: String = "Nouvelle session NEURA"): String {
         val id = UUID.randomUUID().toString()
         val now = System.currentTimeMillis()
         val conversation = ConversationEntity(
@@ -39,7 +39,7 @@ class NeuraRepository(
             title = initialTitle,
             createdAt = now,
             updatedAt = now,
-            lastMessagePreview = "Conversation démarrée",
+            lastMessagePreview = "Discussion démarrée",
             messageCount = 0
         )
         conversationDao.insertOrUpdate(conversation)
@@ -49,7 +49,8 @@ class NeuraRepository(
     suspend fun sendMessage(
         conversationId: String,
         userText: String,
-        attachedFileName: String? = null
+        attachedFileName: String? = null,
+        attachedFileContent: String? = null
     ): MessageEntity {
         val now = System.currentTimeMillis()
 
@@ -86,10 +87,11 @@ class NeuraRepository(
         // 2. Fetch active memories for contextual augmentation
         val currentMemories = memoryDao.getAllMemories().firstOrNull()?.map { "${it.category} : ${it.key} - ${it.value}" } ?: emptyList()
 
-        // 3. Orchestrate response
+        // 3. Orchestrate response with REAL AI engine
         val result = aiEngineService.orchestrateResponse(
             prompt = userText,
             attachedFileName = attachedFileName,
+            attachedFileContent = attachedFileContent,
             activeMemories = currentMemories
         )
 
@@ -111,7 +113,7 @@ class NeuraRepository(
             val creationTitle = when (result.contentType) {
                 ContentType.IMAGE -> "Illustration : ${userText.take(24)}"
                 ContentType.QUIZ -> "QCM : ${userText.take(24)}"
-                ContentType.FLASHCARD -> "Fiche : ${userText.take(24)}"
+                ContentType.FLASHCARD -> "Fiches : ${userText.take(24)}"
                 ContentType.CODE -> "Code : ${userText.take(24)}"
                 ContentType.FILE -> "Document : ${attachedFileName ?: userText.take(24)}"
                 else -> "Création NEURA"
@@ -121,7 +123,7 @@ class NeuraRepository(
                     id = UUID.randomUUID().toString(),
                     type = result.contentType.name,
                     title = creationTitle,
-                    subtitle = "Généré par NEURA AI",
+                    subtitle = "Généré en temps réel",
                     contentJson = result.payloadJson,
                     previewUrl = "",
                     createdAt = System.currentTimeMillis()
@@ -129,7 +131,7 @@ class NeuraRepository(
             )
         }
 
-        // Update conversation message count again
+        // Update conversation message count
         conversationDao.insertOrUpdate(
             updatedConv.copy(
                 updatedAt = System.currentTimeMillis(),
@@ -178,46 +180,11 @@ class NeuraRepository(
         return aiEngineService.testAgnesConnection()
     }
 
+    suspend fun fetchAvailableModels(): List<String> {
+        return aiEngineService.fetchAvailableModels()
+    }
+
     suspend fun seedInitialDataIfEmpty() {
-        // Seed memories if empty
-        val existingMemories = memoryDao.getAllMemories().firstOrNull()
-        if (existingMemories.isNullOrEmpty()) {
-            addMemory("Identité", settingsManager.userName, "Profil", "Haute")
-            addMemory("Domaine", "Étudiant en géomatique & informatique", "Profil", "Haute")
-            addMemory("Style de réponse", "Explications synthétiques avec analogies concrètes", "Préférences", "Haute")
-            addMemory("Objectif 2026", "Concevoir une application mobile avec IA multimodale", "Objectifs", "Haute")
-            addMemory("Projet en cours", "NEURA AI - Assistant personnel intelligent", "Projets", "Haute")
-            addMemory("Format d'apprentissage", "Cartes mémoires et quiz interactifs réguliers", "Méthode", "Moyenne")
-        }
-
-        // Seed sample creations if empty
-        val existingCreations = creationDao.getAllCreations().firstOrNull()
-        if (existingCreations.isNullOrEmpty()) {
-            val sampleImageJson = "{\"prompt\":\"Digital neural brain network with neon cyan and electric purple\",\"imageUrl\":\"\",\"aspect\":\"1:1\",\"style\":\"Digital Art Neo-Futurism\"}"
-            creationDao.insertCreation(
-                CreationEntity(
-                    id = UUID.randomUUID().toString(),
-                    type = ContentType.IMAGE.name,
-                    title = "Illustration Cerveau Numérique",
-                    subtitle = "Généré via Agnes AI v2.1",
-                    contentJson = sampleImageJson,
-                    previewUrl = "",
-                    createdAt = System.currentTimeMillis() - 7200000
-                )
-            )
-
-            val sampleQuizJson = "{\"title\":\"Quiz Python Avancé\",\"questions\":[{\"id\":1,\"question\":\"Quel est le coût temporel de l'accès à un élément par clé dans un dictionnaire ?\",\"options\":[\"O(1)\",\"O(N)\",\"O(log N)\",\"O(N^2)\"],\"correctIndex\":0,\"explanation\":\"Un dictionnaire s'appuie sur une table de hachage O(1).\"}]}"
-            creationDao.insertCreation(
-                CreationEntity(
-                    id = UUID.randomUUID().toString(),
-                    type = ContentType.QUIZ.name,
-                    title = "Quiz Fondamentaux Python",
-                    subtitle = "3 questions interactives",
-                    contentJson = sampleQuizJson,
-                    previewUrl = "",
-                    createdAt = System.currentTimeMillis() - 3600000
-                )
-            )
-        }
+        // Zero hardcoded seed data: user database remains strictly clean and real.
     }
 }

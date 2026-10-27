@@ -122,14 +122,36 @@ fun AIImageCard(
                 .border(1.dp, Color(0xFF2E2E38), RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.neura_icon_fg),
-                contentDescription = "Illustration générée",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-            )
+            val url = imagePayload?.imageUrl
+            if (!url.isNullOrBlank()) {
+                coil.compose.AsyncImage(
+                    model = url,
+                    contentDescription = "Illustration générée",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                )
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = NeuraIcons.Image,
+                        contentDescription = null,
+                        tint = NeuraNeonCyan,
+                        modifier = Modifier.size(36.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Image en attente de génération par l'API",
+                        fontSize = 12.sp,
+                        color = NeuraTextMuted
+                    )
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))

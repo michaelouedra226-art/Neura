@@ -51,14 +51,11 @@ class NeuraViewModel(private val repository: NeuraRepository) : ViewModel() {
     private val _isThinking = MutableStateFlow(false)
     val isThinking: StateFlow<Boolean> = _isThinking.asStateFlow()
 
-    private val _attachedFile = MutableStateFlow<Pair<String, String>?>(null)
+    private val _attachedFile = MutableStateFlow<Pair<String, String>?>(null) // (name, type)
     val attachedFile: StateFlow<Pair<String, String>?> = _attachedFile.asStateFlow()
 
-    private val _showAttachmentDialog = MutableStateFlow(false)
-    val showAttachmentDialog: StateFlow<Boolean> = _showAttachmentDialog.asStateFlow()
-
-    private val _showVoiceDialog = MutableStateFlow(false)
-    val showVoiceDialog: StateFlow<Boolean> = _showVoiceDialog.asStateFlow()
+    private val _attachedFileContent = MutableStateFlow<String?>(null)
+    val attachedFileContent: StateFlow<String?> = _attachedFileContent.asStateFlow()
 
     private val _connectionTestResult = MutableStateFlow<ConnectionTestResult?>(null)
     val connectionTestResult: StateFlow<ConnectionTestResult?> = _connectionTestResult.asStateFlow()
@@ -72,14 +69,17 @@ class NeuraViewModel(private val repository: NeuraRepository) : ViewModel() {
     private val _isTestingAgnes = MutableStateFlow(false)
     val isTestingAgnes: StateFlow<Boolean> = _isTestingAgnes.asStateFlow()
 
+    private val _availableModels = MutableStateFlow<List<String>>(emptyList())
+    val availableModels: StateFlow<List<String>> = _availableModels.asStateFlow()
+
+    private val _isFetchingModels = MutableStateFlow(false)
+    val isFetchingModels: StateFlow<Boolean> = _isFetchingModels.asStateFlow()
+
+    private val _modelsFetchError = MutableStateFlow<String?>(null)
+    val modelsFetchError: StateFlow<String?> = _modelsFetchError.asStateFlow()
+
     private val _creationsFilter = MutableStateFlow("TOUS")
     val creationsFilter: StateFlow<String> = _creationsFilter.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            repository.seedInitialDataIfEmpty()
-        }
-    }
 
     fun setTab(tab: NeuraTab) {
         _currentTab.value = tab
@@ -89,28 +89,14 @@ class NeuraViewModel(private val repository: NeuraRepository) : ViewModel() {
         _inputText.value = text
     }
 
-    fun openAttachmentDialog() {
-        _showAttachmentDialog.value = true
-    }
-
-    fun closeAttachmentDialog() {
-        _showAttachmentDialog.value = false
-    }
-
-    fun openVoiceDialog() {
-        _showVoiceDialog.value = true
-    }
-
-    fun closeVoiceDialog() {
-        _showVoiceDialog.value = false
-    }
-
-    fun attachFile(name: String, type: String) {
+    fun attachRealFile(name: String, type: String, content: String?) {
         _attachedFile.value = Pair(name, type)
+        _attachedFileContent.value = content
     }
 
     fun removeAttachment() {
         _attachedFile.value = null
+        _attachedFileContent.value = null
     }
 
     fun setCreationsFilter(filter: String) {
@@ -124,9 +110,10 @@ class NeuraViewModel(private val repository: NeuraRepository) : ViewModel() {
 
     fun startNewConversation() {
         viewModelScope.launch {
-            val newId = repository.createNewConversation("Nouvelle session NEURA")
+            val newId = repository.createNewConversation("Nouvelle discussion")
             _currentConversationId.value = newId
             _attachedFile.value = null
+            _attachedFileContent.value = null
             _inputText.value = ""
             _currentTab.value = NeuraTab.CHAT
         }
@@ -144,6 +131,7 @@ class NeuraViewModel(private val repository: NeuraRepository) : ViewModel() {
     fun sendMessage(customPrompt: String? = null) {
         val prompt = (customPrompt ?: _inputText.value).trim()
         val attached = _attachedFile.value
+        val fileContent = _attachedFileContent.value
 
         if (prompt.isBlank() && attached == null) return
 
@@ -151,6 +139,7 @@ class NeuraViewModel(private val repository: NeuraRepository) : ViewModel() {
 
         _inputText.value = ""
         _attachedFile.value = null
+        _attachedFileContent.value = null
 
         viewModelScope.launch {
             var convId = _currentConversationId.value
@@ -164,7 +153,8 @@ class NeuraViewModel(private val repository: NeuraRepository) : ViewModel() {
                 repository.sendMessage(
                     conversationId = convId,
                     userText = textToSend,
-                    attachedFileName = attached?.first
+                    attachedFileName = attached?.first,
+                    attachedFileContent = fileContent
                 )
             } finally {
                 _isThinking.value = false
@@ -187,6 +177,21 @@ class NeuraViewModel(private val repository: NeuraRepository) : ViewModel() {
     fun deleteCreation(id: String) {
         viewModelScope.launch {
             repository.deleteCreation(id)
+        }
+    }
+
+    fun fetchAvailableModels() {
+        viewModelScope.launch {
+            _isFetchingModels.value = true
+            _modelsFetchError.value = null
+            try {
+                val models = repository.fetchAvailableModels()
+                _availableModels.value = models
+            } catch (e: Exception) {
+                _modelsFetchError.value = e.localizedMessage ?: "Impossible de récupérer les modèles."
+            } finally {
+                _isFetchingModels.value = false
+            }
         }
     }
 

@@ -9,7 +9,9 @@ import androidx.activity.viewModels
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -18,17 +20,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.example.core.components.NeuraFloatingNav
 import com.example.core.components.NeuraTab
 import com.example.data.local.NeuraDatabase
 import com.example.data.local.SettingsManager
 import com.example.data.repository.AiEngineService
 import com.example.data.repository.NeuraRepository
-import com.example.ui.components.AttachmentDialog
-import com.example.ui.components.VoiceInputDialog
 import com.example.ui.screens.ChatScreen
 import com.example.ui.screens.CreationsScreen
 import com.example.ui.screens.HistoryScreen
@@ -69,6 +68,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun NeuraApp(viewModel: NeuraViewModel) {
     val settingsManager = viewModel.settingsManager
@@ -76,8 +76,7 @@ fun NeuraApp(viewModel: NeuraViewModel) {
     var isOnboardingDone by remember { mutableStateOf(settingsManager.isOnboardingDone) }
 
     val currentTab by viewModel.currentTab.collectAsState()
-    val showAttachmentDialog by viewModel.showAttachmentDialog.collectAsState()
-    val showVoiceDialog by viewModel.showVoiceDialog.collectAsState()
+    val isImeVisible = WindowInsets.isImeVisible
 
     // BackHandler: return to Chat if on other tabs
     if (isSplashFinished && isOnboardingDone && currentTab != NeuraTab.CHAT) {
@@ -110,17 +109,21 @@ fun NeuraApp(viewModel: NeuraViewModel) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     containerColor = NeuraBackground,
+                    contentWindowInsets = WindowInsets(0, 0, 0, 0),
                     bottomBar = {
-                        NeuraFloatingNav(
-                            selectedTab = currentTab,
-                            onTabSelected = { tab -> viewModel.setTab(tab) }
-                        )
+                        // Automatically hide bottom navigation bar when typing to avoid any layout glitch
+                        if (!isImeVisible) {
+                            NeuraFloatingNav(
+                                selectedTab = currentTab,
+                                onTabSelected = { tab -> viewModel.setTab(tab) }
+                            )
+                        }
                     }
                 ) { innerPadding ->
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(bottom = innerPadding.calculateBottomPadding())
+                            .padding(bottom = if (!isImeVisible) innerPadding.calculateBottomPadding() else 0.dp)
                     ) {
                         Crossfade(targetState = currentTab, label = "tabCrossfade") { tab ->
                             when (tab) {
@@ -134,25 +137,6 @@ fun NeuraApp(viewModel: NeuraViewModel) {
                     }
                 }
             }
-        }
-
-        // Modals
-        if (showAttachmentDialog) {
-            AttachmentDialog(
-                onDismiss = { viewModel.closeAttachmentDialog() },
-                onFileSelected = { name, type ->
-                    viewModel.attachFile(name, type)
-                }
-            )
-        }
-
-        if (showVoiceDialog) {
-            VoiceInputDialog(
-                onDismiss = { viewModel.closeVoiceDialog() },
-                onTranscribed = { transcription ->
-                    viewModel.sendMessage(transcription)
-                }
-            )
         }
     }
 }

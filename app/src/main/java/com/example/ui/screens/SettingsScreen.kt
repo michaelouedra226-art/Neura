@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -88,6 +90,10 @@ fun SettingsScreen(
     val agnesConnectionResult by viewModel.agnesConnectionResult.collectAsState()
     val isTestingAgnes by viewModel.isTestingAgnes.collectAsState()
 
+    val availableModels by viewModel.availableModels.collectAsState()
+    val isFetchingModels by viewModel.isFetchingModels.collectAsState()
+    val modelsFetchError by viewModel.modelsFetchError.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -106,7 +112,7 @@ fun SettingsScreen(
             color = Color.White
         )
         Text(
-            text = "Configurez indépendamment votre moteur conversationnel et Agnes AI pour les images",
+            text = "Connectez vos clés réelles, explorez les modèles et configurez Agnes AI",
             fontSize = 12.sp,
             color = NeuraTextMuted
         )
@@ -136,11 +142,11 @@ fun SettingsScreen(
                         Box(
                             modifier = Modifier
                                 .size(9.dp)
-                                .background(NeuraSuccess, CircleShape)
+                                .background(if (settings.apiKey.isNotBlank()) NeuraSuccess else NeuraTextMuted, CircleShape)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Moteur Principal (Conversation & Textes)",
+                            text = "Moteur Principal (Conversation)",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
@@ -153,10 +159,10 @@ fun SettingsScreen(
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
-                            text = "${settings.lastPingMs} ms",
+                            text = if (settings.apiKey.isNotBlank()) "${settings.lastPingMs} ms" else "Non configuré",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = NeuraNeonCyan
+                            color = if (settings.apiKey.isNotBlank()) NeuraNeonCyan else NeuraTextMuted
                         )
                     }
                 }
@@ -167,6 +173,7 @@ fun SettingsScreen(
                     value = endpoint,
                     onValueChange = { endpoint = it },
                     label = { Text("Endpoint Conversation", color = NeuraTextMuted) },
+                    placeholder = { Text("https://generativelanguage.googleapis.com", color = Color(0xFF555566)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = NeuraNeonCyan,
                         unfocusedBorderColor = NeuraCardBorder,
@@ -183,6 +190,7 @@ fun SettingsScreen(
                     value = if (isKeyVisible) apiKey else if (apiKey.isEmpty()) "" else settings.getMaskedApiKey(),
                     onValueChange = { apiKey = it },
                     label = { Text("Clé API Principale", color = NeuraTextMuted) },
+                    placeholder = { Text("Entrez votre clé API réelle...", color = Color(0xFF555566)) },
                     trailingIcon = {
                         Text(
                             text = if (isKeyVisible) "Masquer" else "Afficher",
@@ -204,12 +212,141 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth().testTag("settings_apikey")
                 )
 
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // BUTTON: Fetch Models Live
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Brush.linearGradient(listOf(NeuraElectricBlue, NeuraVibrantViolet)))
+                            .clickable(enabled = !isFetchingModels) {
+                                triggerHaptic(context)
+                                viewModel.updateSettings(
+                                    endpoint = endpoint,
+                                    apiKey = apiKey,
+                                    provider = providerName,
+                                    textModel = textModel,
+                                    imageModel = agnesModel,
+                                    visionModel = settings.visionModel,
+                                    userName = userName,
+                                    learningStyle = learningStyle
+                                )
+                                viewModel.fetchAvailableModels()
+                            }
+                            .padding(vertical = 11.dp)
+                            .testTag("fetch_models_btn"),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (isFetchingModels) {
+                                CircularProgressIndicator(
+                                    color = Color.White,
+                                    modifier = Modifier.size(14.dp),
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                            }
+                            Text(
+                                text = if (isFetchingModels) "Recherche en direct..." else "Récupérer les modèles disponibles",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White
+                            )
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFF222638))
+                            .border(1.dp, NeuraCardBorder, RoundedCornerShape(12.dp))
+                            .clickable(enabled = !isTestingConnection) {
+                                triggerHaptic(context)
+                                viewModel.updateSettings(
+                                    endpoint = endpoint,
+                                    apiKey = apiKey,
+                                    provider = providerName,
+                                    textModel = textModel,
+                                    imageModel = agnesModel,
+                                    visionModel = settings.visionModel,
+                                    userName = userName,
+                                    learningStyle = learningStyle
+                                )
+                                viewModel.testConnection()
+                            }
+                            .padding(horizontal = 14.dp, vertical = 11.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (isTestingConnection) "..." else "Test ping",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White
+                        )
+                    }
+                }
+
+                // Display Discovered Models
+                if (modelsFetchError != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "⚠ ${modelsFetchError}",
+                        fontSize = 11.5.sp,
+                        color = NeuraError,
+                        lineHeight = 15.sp
+                    )
+                }
+
+                if (availableModels.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "Modèles détectés pour cette clé (${availableModels.size}) — Touchez pour choisir :",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = NeuraNeonCyan
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        availableModels.forEach { modelName ->
+                            val isChosen = textModel == modelName
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(if (isChosen) NeuraElectricBlue else Color(0xFF1E2232))
+                                    .border(1.dp, if (isChosen) NeuraNeonCyan else NeuraCardBorder, RoundedCornerShape(10.dp))
+                                    .clickable {
+                                        triggerHaptic(context)
+                                        textModel = modelName
+                                    }
+                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = modelName,
+                                    fontSize = 11.5.sp,
+                                    fontWeight = if (isChosen) FontWeight.Bold else FontWeight.Normal,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
                     value = textModel,
                     onValueChange = { textModel = it },
-                    label = { Text("Modèle conversation (ex: gemini-2.5-flash)", color = NeuraTextMuted) },
+                    label = { Text("Modèle conversation actif", color = NeuraTextMuted) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = NeuraNeonCyan,
                         unfocusedBorderColor = NeuraCardBorder,
@@ -219,31 +356,6 @@ fun SettingsScreen(
                     shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.fillMaxWidth().testTag("settings_textmodel")
                 )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Ping Button Main API
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFF222638))
-                        .border(1.dp, NeuraCardBorder, RoundedCornerShape(12.dp))
-                        .clickable(enabled = !isTestingConnection) {
-                            triggerHaptic(context)
-                            viewModel.testConnection()
-                        }
-                        .padding(vertical = 10.dp)
-                        .testTag("test_main_api_btn"),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = if (isTestingConnection) "Test conversationnel en cours..." else "Tester la connexion API Conversation",
-                        fontSize = 12.5.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White
-                    )
-                }
 
                 if (connectionTestResult != null) {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -314,10 +426,10 @@ fun SettingsScreen(
                             .padding(horizontal = 8.dp, vertical = 3.dp)
                     ) {
                         Text(
-                            text = "${settings.agnesPingMs} ms",
+                            text = if (settings.agnesApiKey.isNotBlank()) "${settings.agnesPingMs} ms" else "En attente clé",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = NeuraNeonCyan
+                            color = if (settings.agnesApiKey.isNotBlank()) NeuraNeonCyan else NeuraTextMuted
                         )
                     }
                 }
@@ -325,10 +437,10 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Zone dédiée uniquement à la clé Agnes AI pour la génération d'images haute définition, au cas où l'API principale ci-dessus ne prend pas en charge la création visuelle.",
+                    text = "Espace exclusif réservé au moteur d'images Agnes AI si votre API principale ne gère que le texte.",
                     fontSize = 12.sp,
                     color = NeuraTextSecondary,
-                    lineHeight = 17.sp
+                    lineHeight = 16.sp
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -337,6 +449,7 @@ fun SettingsScreen(
                     value = agnesEndpoint,
                     onValueChange = { agnesEndpoint = it },
                     label = { Text("Endpoint Agnes AI Image", color = NeuraTextMuted) },
+                    placeholder = { Text("https://api.agnes.ai/v1/images/generations", color = Color(0xFF665577)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = NeuraVibrantViolet,
                         unfocusedBorderColor = Color(0xFF382C52),
@@ -347,12 +460,13 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth().testTag("settings_agnes_endpoint")
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
                     value = if (isAgnesKeyVisible) agnesApiKey else if (agnesApiKey.isEmpty()) "" else settings.getMaskedAgnesApiKey(),
                     onValueChange = { agnesApiKey = it },
                     label = { Text("Clé API Dédiée Agnes AI (agn_...)", color = NeuraTextMuted) },
+                    placeholder = { Text("Entrez votre clé Agnes AI...", color = Color(0xFF665577)) },
                     trailingIcon = {
                         Text(
                             text = if (isAgnesKeyVisible) "Masquer" else "Afficher",
@@ -374,12 +488,50 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth().testTag("settings_agnes_apikey")
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Presets for Agnes AI Model
+                Text(
+                    text = "Modèles d'image compatibles :",
+                    fontSize = 11.sp,
+                    color = NeuraTextMuted
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    listOf("agnes-flux-pro-v2", "agnes-ultra-2.1", "dall-e-3", "stable-diffusion-xl").forEach { m ->
+                        val isChosen = agnesModel == m
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(if (isChosen) NeuraVibrantViolet else Color(0xFF281C3E))
+                                .border(1.dp, if (isChosen) NeuraNeonCyan else Color(0xFF453066), RoundedCornerShape(8.dp))
+                                .clickable {
+                                    triggerHaptic(context)
+                                    agnesModel = m
+                                }
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = m,
+                                fontSize = 11.sp,
+                                color = Color.White,
+                                fontWeight = if (isChosen) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
                     value = agnesModel,
                     onValueChange = { agnesModel = it },
-                    label = { Text("Modèle Image Agnes (ex: agnes-flux-pro-v2)", color = NeuraTextMuted) },
+                    label = { Text("Nom du modèle image actif", color = NeuraTextMuted) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = NeuraVibrantViolet,
                         unfocusedBorderColor = Color(0xFF382C52),
@@ -390,13 +542,13 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth().testTag("settings_agnes_model")
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 // Test Agnes AI Button
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(14.dp))
+                        .clip(RoundedCornerShape(12.dp))
                         .background(
                             Brush.linearGradient(listOf(NeuraVibrantViolet, NeuraElectricBlue))
                         )
@@ -405,21 +557,22 @@ fun SettingsScreen(
                             viewModel.updateAgnesSettings(agnesEndpoint, agnesApiKey, agnesModel)
                             viewModel.testAgnesConnection()
                         }
-                        .padding(vertical = 12.dp)
+                        .padding(vertical = 11.dp)
                         .testTag("test_agnes_api_btn"),
                     contentAlignment = Alignment.Center
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = NeuraIcons.Sparkles,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        if (isTestingAgnes) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(14.dp),
+                                strokeWidth = 2.dp
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                        }
                         Text(
-                            text = if (isTestingAgnes) "Vérification Agnes AI en cours..." else "Tester la clé & l'API Agnes AI (Image)",
-                            fontSize = 13.sp,
+                            text = if (isTestingAgnes) "Vérification Agnes AI..." else "Tester la connexion Agnes AI (Image)",
+                            fontSize = 12.5.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
                         )
@@ -427,35 +580,20 @@ fun SettingsScreen(
                 }
 
                 if (agnesConnectionResult != null) {
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     val res = agnesConnectionResult!!
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                if (res.isSuccess) NeuraSuccess.copy(alpha = 0.15f) else NeuraError.copy(alpha = 0.15f),
-                                RoundedCornerShape(10.dp)
-                            )
-                            .border(1.dp, if (res.isSuccess) NeuraSuccess else NeuraError, RoundedCornerShape(10.dp))
-                            .padding(10.dp)
-                    ) {
-                        Text(
-                            text = if (res.isSuccess) "✓ ${res.message} (Latence: ${res.latencyMs} ms)" else "⚠ ${res.message}",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = if (res.isSuccess) NeuraSuccess else NeuraError,
-                            lineHeight = 16.sp
-                        )
-                    }
+                    Text(
+                        text = if (res.isSuccess) "✓ ${res.message} (${res.latencyMs} ms)" else "⚠ ${res.message}",
+                        fontSize = 11.5.sp,
+                        color = if (res.isSuccess) NeuraSuccess else NeuraError
+                    )
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // ==========================================
-        // 3. PROFILE & PREFERENCES
-        // ==========================================
+        // Profile & Preferences
         Text(
             text = "Profil Utilisateur",
             fontSize = 16.sp,
@@ -463,13 +601,13 @@ fun SettingsScreen(
             color = Color.White
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedTextField(
                 value = userName,
                 onValueChange = { userName = it },
-                label = { Text("Nom de l'utilisateur", color = NeuraTextMuted) },
+                label = { Text("Votre prénom ou pseudonyme", color = NeuraTextMuted) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = NeuraNeonCyan,
                     unfocusedBorderColor = NeuraCardBorder,
@@ -483,7 +621,7 @@ fun SettingsScreen(
             OutlinedTextField(
                 value = learningStyle,
                 onValueChange = { learningStyle = it },
-                label = { Text("Méthode & style d'apprentissage", color = NeuraTextMuted) },
+                label = { Text("Directives d'apprentissage / ton souhaité", color = NeuraTextMuted) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = NeuraNeonCyan,
                     unfocusedBorderColor = NeuraCardBorder,
@@ -495,11 +633,11 @@ fun SettingsScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        // Global Save Button
+        // Save All Button
         NeuraGradientButton(
-            text = "Sauvegarder toutes les clés & configurations",
+            text = "Enregistrer toutes les configurations",
             onClick = {
                 viewModel.updateSettings(
                     endpoint = endpoint,
@@ -516,7 +654,7 @@ fun SettingsScreen(
                     apiKey = agnesApiKey,
                     model = agnesModel
                 )
-                Toast.makeText(context, "Configurations enregistrées avec succès", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Configurations sauvegardées avec succès", Toast.LENGTH_SHORT).show()
             },
             modifier = Modifier.fillMaxWidth(),
             testTag = "save_all_settings_btn"
